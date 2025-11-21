@@ -30,8 +30,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Herramientas para mejorar tu bienestar mental y cognitivo"
-            android:textSize="16sp"
-            android:textColor="@color/gray_subtitle"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
             android:gravity="center"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="32dp"/>
