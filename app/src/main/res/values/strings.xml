@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">DSMProyecto</string>
+    <!-- Breathing Exercise -->
+    <string name="breathing_exercise">Ejercicio de Respiración</string>
+    <string name="breathing_subtitle">Respiración profunda para aliviar el estrés</string>
+    <string name="ready_to_start">Listo para comenzar</string>
+    <string name="breathe">Respira</string>
+    <string name="paused">Pausado</string>
+    <string name="exercise_complete">¡Ejercicio completado!</string>
+    <string name="back">Atrás</string>
+    <string name="help">Ayuda</string>
+    <string name="play_pause">Reproducir/Pausar</string>
+    <string name="ok">OK</string>
+    <string name="breathing_help_message">Sigue el ritmo del círculo:\n\n• Cuando crece: Inhala profundamente\n• Cuando se reduce: Exhala lentamente\n\nCompleta 5 rondas de 1 minuto cada una.</string>
 </resources>

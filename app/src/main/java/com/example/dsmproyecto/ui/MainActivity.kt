@@ -1,16 +1,27 @@
 package com.example.dsmproyecto.ui
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.dsmproyecto.R
+import com.example.dsmproyecto.ui.breathing.BreathingActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val optionRespiracion: View = findViewById(R.id.option_respiracion)
+
+        // 2. Le pones el click listener al contenedor
+        optionRespiracion.setOnClickListener {
+            // Ir a otra Activity
+            val intent = Intent(this, BreathingActivity::class.java)
+            startActivity(intent)
+        }
 
         // Llama a la función que configura todas las opciones de menú
         setupMenuOptions()

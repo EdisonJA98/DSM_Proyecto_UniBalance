@@ -14,4 +14,10 @@
     <color name="color_text_title">#202020</color>
     <color name="gray_subtitle">#757575</color>
 
+    <!-- Breathing Exercise Colors -->
+    <color name="breathing_turquoise_light">#80CBC4</color>
+    <color name="breathing_orange">#FF8A65</color>
+    <color name="breathing_teal">#00897B</color>
+    <color name="breathing_yellow">#FFD54F</color>
+    <color name="breathing_teal_accent">#4DB6AC</color>
 </resources>
