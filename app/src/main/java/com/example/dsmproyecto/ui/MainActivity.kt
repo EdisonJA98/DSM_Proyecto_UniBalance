@@ -7,21 +7,13 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.dsmproyecto.R
+import com.example.dsmproyecto.ui.activebreak.PausasActivasActivity
 import com.example.dsmproyecto.ui.breathing.BreathingActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        val optionRespiracion: View = findViewById(R.id.option_respiracion)
-
-        // 2. Le pones el click listener al contenedor
-        optionRespiracion.setOnClickListener {
-            // Ir a otra Activity
-            val intent = Intent(this, BreathingActivity::class.java)
-            startActivity(intent)
-        }
 
         // Llama a la función que configura todas las opciones de menú
         setupMenuOptions()
@@ -68,12 +60,12 @@ class MainActivity : AppCompatActivity() {
         )
 
         // --------------------------------------------------------------------
-        // 4. OPCIÓN: Ejecutar pausas ergonómicas
+        // 4. OPCIÓN: Ejecutar pausas activas
         // --------------------------------------------------------------------
         val pausasView = findViewById<View>(R.id.option_pausas)
         configureOption(
             view = pausasView,
-            title = "Ejecutar pausas ergonómicas",
+            title = "Ejecutar pausas activas",
             description = "Realiza pausas guiadas para sentirte mejor",
             iconResId = R.drawable.ic_stretch // Usamos el ícono de estiramiento/movimiento
         )
@@ -99,6 +91,22 @@ class MainActivity : AppCompatActivity() {
             description = "Mejora tus habilidades para hablar en público y exposicion",
             iconResId = R.drawable.ic_mic // Ya creaste este icono
         )
+
+        // --------------------------------------------------------------------
+        // EVENTOS DE CLIC (Usamos las variables locales que ya se definieron)
+        // --------------------------------------------------------------------
+
+        // Clic para la opción 3: de Respiración (usando BreathingActivity)
+        respiracionView.setOnClickListener {
+            val intent = Intent(this, BreathingActivity::class.java)
+            startActivity(intent)
+        }
+
+        // 💡 CLIC PARA LA OPCIÓN 4: DE PAUSAS ACTIVAS (Usando PausasActivasActivity)
+        pausasView.setOnClickListener {
+            val intent = Intent(this, PausasActivasActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     /**

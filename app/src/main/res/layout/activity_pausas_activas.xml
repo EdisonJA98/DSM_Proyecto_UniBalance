@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_fondo_general"
+    tools:context=".ui.activebreak.PausasActivasActivity"> <ImageButton
+    android:id="@+id/btn_back"
+    android:layout_width="48dp"
+    android:layout_height="48dp"
+    android:layout_marginStart="20dp"
+    android:layout_marginTop="20dp"
+    android:background="@drawable/bg_icon_circle"
+    android:elevation="4dp"
+    android:src="@drawable/ic_arrow_back"
+    app:tint="@color/black"
+    android:contentDescription="Botón de retroceso"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_header_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:text="Pausas Activas de\nBienestar"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:background="@drawable/bg_rounded_header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="50dp" />
+
+    <TextView
+        android:id="@+id/tv_choose_descanso"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="Elige tu descanso ideal"
+        android:textColor="@color/gray_subtitle"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_header_title" />
+
+    <LinearLayout
+        android:id="@+id/options_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="24dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/tv_choose_descanso"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <include
+            android:id="@+id/option_estiramiento"
+            layout="@layout/item_pausa_option"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"/>
+
+        <include
+            android:id="@+id/option_descanso_visual"
+            layout="@layout/item_pausa_option"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_programar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="Programar"
+        android:textSize="18sp"
+        android:padding="12dp"
+        android:background="@drawable/bg_rounded_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/options_container"
+        app:layout_constraintEnd_toEndOf="@+id/options_container"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
