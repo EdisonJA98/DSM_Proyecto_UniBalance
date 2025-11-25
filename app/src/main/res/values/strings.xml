@@ -12,8 +12,13 @@
     <string name="play_pause">Reproducir/Pausar</string>
     <string name="ok">OK</string>
     <string name="breathing_help_message">Sigue el ritmo del círculo:\n\n• Cuando crece: Inhala profundamente\n• Cuando se reduce: Exhala lentamente\n\nCompleta 5 rondas de 1 minuto cada una.</string>
+
+    <!-- Pausa Activa -->
     <string name="ayuda_cuidado_visual_contenido">
         \u2022 Ejecuta movimientos oculares lentos y controlados.\n
         \u2022 Mantén los hombros relajados y la cabeza quieta.
     </string>
+    <string name="confirm_exit_message">¿Estás seguro que quieres retroceder?</string>
+    <string name="confirm_yes">Sí</string>
+    <string name="confirm_no">No</string>
 </resources>
