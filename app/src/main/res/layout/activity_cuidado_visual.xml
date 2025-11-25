@@ -6,13 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color_fondo_general"
-    tools:context=".ui.activebreak.eyecare.CuidadoVisualActivity"> <View
-    android:id="@+id/bottom_bar_bg"
-    android:layout_width="match_parent"
-    android:layout_height="80dp"
-    android:background="@color/color_accent_primary"
-    app:layout_constraintBottom_toBottomOf="parent"/>
+    tools:context=".ui.activebreak.eyecare.CuidadoVisualActivity">
 
+    <!-- Fondo turquesa inferior -->
+    <View
+        android:id="@+id/bottom_bar_bg"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@color/color_accent_primary"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <!-- Botones de Cabecera -->
     <ImageButton
         android:id="@+id/btn_back"
         android:layout_width="48dp"
@@ -41,6 +45,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Título -->
     <TextView
         android:id="@+id/tv_title_ejercicio"
         android:layout_width="wrap_content"
@@ -58,6 +63,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Instrucción -->
     <TextView
         android:id="@+id/tv_instruccion"
         android:layout_width="wrap_content"
@@ -71,19 +77,40 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_title_ejercicio" />
 
-    <ImageView
-        android:id="@+id/iv_ojo_animacion"
+    <!-- 4. Área Central de Animación (Ojo Compuesto por Capas) -->
+    <!-- CAMBIO CLAVE: Usamos FrameLayout en lugar de un simple ImageView -->
+    <FrameLayout
+        android:id="@+id/contenedor_ojo"
         android:layout_width="160dp"
         android:layout_height="160dp"
         android:layout_marginTop="40dp"
         android:background="@drawable/bg_eye_circle"
-        android:src="@drawable/ic_eye"
-        app:tint="@color/color_accent_primary"
-        android:contentDescription="Ojo para ejercicio visual"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_instruccion" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_instruccion">
 
+        <!-- CAPA 1: La Pupila Móvil (Centrada inicialmente) -->
+        <!-- Esta es la vista que vamos a mover con código Kotlin (translationX/Y) -->
+        <ImageView
+            android:id="@+id/iv_pupila_movil"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_pupila_completa"
+            tools:ignore="ContentDescription" />
+
+        <!-- CAPA 2: El Contorno (Párpados) Estático encima -->
+        <!-- Esta capa se queda quieta y da la forma de ojo -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_contorno_ojo"
+            android:padding="10dp"
+            tools:ignore="ContentDescription" />
+
+    </FrameLayout>
+
+    <!-- Temporizador -->
     <LinearLayout
         android:id="@+id/timer_container"
         android:layout_width="wrap_content"
@@ -93,7 +120,7 @@
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_ojo_animacion">
+        app:layout_constraintTop_toBottomOf="@+id/contenedor_ojo">
 
         <TextView
             android:id="@+id/tv_timer"
@@ -113,6 +140,7 @@
 
     </LinearLayout>
 
+    <!-- Controles -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

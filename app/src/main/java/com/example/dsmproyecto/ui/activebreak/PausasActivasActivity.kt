@@ -72,7 +72,6 @@ class PausasActivasActivity : AppCompatActivity() {
 
     /**
      * Función helper para configurar el título y el ícono de un layout de pausa incluido.
-     * @param view La vista contenedora del include (ej. R.id.option_estiramiento).
      */
     private fun configurePausaOption(view: View, title: String, iconResId: Int) {
         // Accedemos a los elementos internos definidos en item_pausa_option.xml
