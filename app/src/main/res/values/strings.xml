@@ -11,8 +11,7 @@
     <string name="help">Ayuda</string>
     <string name="play_pause">Reproducir/Pausar</string>
     <string name="ok">OK</string>
-    <string name="breathing_help_message">Sigue el ritmo del círculo:\n\n• Cuando crece: Inhala profundamente\n• Cuando se reduce: Exhala lentamente\n\nCompleta 5 rondas de 1 minuto cada una.</string>
-
+    <string name="breathing_help_message">Sigue el ritmo del círculo para inhalar y exhalar. Puedes hacerlo con los ojos abiertos o cerrados, guiándote por la animación o el sonido. Te ayudará a relajarte y a reducir el estrés.</string>
     <!-- Pausa Activa -->
     <string name="ayuda_cuidado_visual_contenido">
         \u2022 Ejecuta movimientos oculares lentos y controlados.\n

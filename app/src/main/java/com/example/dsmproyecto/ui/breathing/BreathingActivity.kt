@@ -6,6 +6,7 @@ import android.os.CountDownTimer
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dsmproyecto.R
 import com.example.dsmproyecto.databinding.ActivityBreathingBinding
+import android.widget.ArrayAdapter
 
 class BreathingActivity : AppCompatActivity() {
 
@@ -20,7 +21,13 @@ class BreathingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityBreathingBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        val adapter = ArrayAdapter.createFromResource(
+            this,
+            R.array.breathing_values,
+            R.layout.item_spinner_time
+        )
+        adapter.setDropDownViewResource(R.layout.item_spinner_dropdown)
+        binding.spnTime.adapter = adapter
         setupUI()
         setupListeners()
     }
@@ -52,14 +59,19 @@ class BreathingActivity : AppCompatActivity() {
     }
 
     private fun startExercise() {
+        // Obtener tiempo desde el spinner
+        val selectedTimeText = binding.spnTime.selectedItem.toString()
+        val minutes = selectedTimeText.split(" ")[0].toInt()
+        timeLeftInMillis = minutes * 60_000L
+
         isPlaying = true
         binding.btnPlayPause.setImageResource(R.drawable.ic_pause)
         binding.tvStatus.text = getString(R.string.breathe)
 
-        // Iniciar animación de respiración
+        // Animación
         binding.breathingView.startBreathing()
 
-        // Iniciar contador
+        // Iniciar timer
         startTimer()
     }
 
@@ -95,7 +107,9 @@ class BreathingActivity : AppCompatActivity() {
     private fun completeRound() {
         if (currentRound < maxRounds) {
             currentRound++
-            timeLeftInMillis = 60000L // Reset a 1 minuto
+            val selectedTimeText = binding.spnTime.selectedItem.toString()
+            val minutes = selectedTimeText.split(" ")[0].toInt()
+            timeLeftInMillis = minutes * 60_000L
             updateTimerText()
             startTimer()
         } else {

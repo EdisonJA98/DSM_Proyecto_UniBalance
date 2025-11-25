@@ -111,13 +111,31 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Selección de rondas -->
-        <Spinner
-            android:id="@+id/spinnerRounds"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_marginBottom="12dp"
-            android:entries="@array/breathing_values" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
+
+            <Spinner
+                android:id="@+id/spnTime"
+                android:layout_width="120dp"
+                android:layout_height="48dp"
+                android:entries="@array/breathing_values"
+                android:spinnerMode="dropdown"
+                android:background="@drawable/spinner_bg" />
+
+            <TextView
+                android:id="@+id/txtMinutos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="minutos"
+                android:textSize="16sp"
+                android:layout_marginStart="8dp"
+                android:textColor="#424242" />
+
+        </LinearLayout>
 
         <!-- Progreso del tiempo -->
         <ProgressBar
