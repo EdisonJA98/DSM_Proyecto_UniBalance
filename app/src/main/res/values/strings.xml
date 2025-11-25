@@ -20,4 +20,12 @@
     <string name="confirm_exit_message">¿Estás seguro que quieres retroceder?</string>
     <string name="confirm_yes">Sí</string>
     <string name="confirm_no">No</string>
+
+    <string name="ayuda_estiramiento_contenido">
+        \u2022 Realiza movimientos lentos y controlados\n
+        \u2022 Respira profundamente durante cada ejercicio\n
+        \u2022 Atento al audio para el cambio de ejercicio\n
+        \u2022 Detente si experimentas cualquier molestia
+    </string>
+
 </resources>

@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.dsmproyecto.R
 import com.example.dsmproyecto.ui.activebreak.eyecare.CuidadoVisualActivity
+import com.example.dsmproyecto.ui.activebreak.stretchingexercises.EstiramientoActivity
 
 class PausasActivasActivity : AppCompatActivity() {
 
@@ -47,8 +48,8 @@ class PausasActivasActivity : AppCompatActivity() {
 
         // Evento de clic: El flujo principal dice que lleva a la animación de estiramiento (20s) [cite: 16, 17]
         estiramientoView.setOnClickListener {
-            // Aquí iría el Intent a la Activity de la Rutina de Estiramiento
-            Toast.makeText(this, "Iniciar Rutina de Estiramiento (20s)", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, EstiramientoActivity::class.java)
+            startActivity(intent)
         }
 
         // --------------------------------------------------------------------
