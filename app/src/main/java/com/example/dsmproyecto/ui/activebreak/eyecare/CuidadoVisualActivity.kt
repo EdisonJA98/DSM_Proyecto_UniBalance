@@ -1,5 +1,6 @@
 package com.example.dsmproyecto.ui.activebreak.eyecare
 
+import AyudaCuidadoVisualDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -32,7 +33,11 @@ class CuidadoVisualActivity : AppCompatActivity() {
 
         // 2. Configurar el botón de Ayuda
         findViewById<View>(R.id.btn_help).setOnClickListener {
-            Toast.makeText(this, "Información sobre ejercicios oculares", Toast.LENGTH_SHORT).show()
+            // Creamos una instancia del diálogo
+            val dialog = AyudaCuidadoVisualDialog()
+
+            // Mostramos el diálogo usando el FragmentManager
+            dialog.show(supportFragmentManager, "AyudaCuidadoVisual")
         }
 
         // 3. Lógica del temporizador
