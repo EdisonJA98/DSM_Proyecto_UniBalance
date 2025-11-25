@@ -1,5 +1,6 @@
 package com.example.dsmproyecto.ui.activebreak
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -7,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.example.dsmproyecto.R
+import com.example.dsmproyecto.ui.activebreak.eyecare.CuidadoVisualActivity
 
 class PausasActivasActivity : AppCompatActivity() {
 
@@ -62,8 +64,8 @@ class PausasActivasActivity : AppCompatActivity() {
         // Evento de clic: El flujo principal dice que lleva a la animación de ejercicios oculares (20s) [cite: 10]
         descansoVisualView.setOnClickListener {
             // Aquí iría el Intent a la Activity de la Rutina de Cuidado Visual
-            Toast.makeText(this, "Iniciar Rutina de Cuidado Visual (20s)", Toast.LENGTH_SHORT)
-                .show()
+            val intent = Intent(this, CuidadoVisualActivity::class.java)
+            startActivity(intent)
         }
     }
 
