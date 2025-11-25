@@ -2,58 +2,54 @@ package com.example.dsmproyecto.ui.activebreak.eyecare
 
 import AyudaCuidadoVisualDialog
 import ConfirmExitDialog
+import android.animation.Keyframe
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.animation.ValueAnimator
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.LinearInterpolator
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dsmproyecto.R
-// Asegúrate de importar tus diálogos si están en el mismo paquete o ajusta la importación
+// Importa tus diálogos
 
 class CuidadoVisualActivity : AppCompatActivity() {
 
-    private val TOTAL_TIME_MS: Long = 20500
-    // Punto de cambio: a los 10 segundos cambiamos de horizontal a vertical
-    private val SWITCH_TIME_MS: Long = 10000
+    // TIEMPO TOTAL: 65 segundos (32s Horizontal + 32s Vertical + buffer)
+    private val TOTAL_TIME_MS: Long = 65000
+    // Cambio a la mitad (32s aprox)
+    private val SWITCH_TIME_MS: Long = 32000
 
     private var timeLeftMS: Long = TOTAL_TIME_MS
     private lateinit var countDownTimer: CountDownTimer
     private var isTimerRunning = false
 
-    // Referencias de UI
     private lateinit var btnPausePlay: ImageButton
-    private lateinit var ivPupila: ImageView // La parte móvil del ojo
+    private lateinit var ivPupila: ImageView
 
-    // Variable para controlar la animación
     private var currentAnimator: ObjectAnimator? = null
-    private var currentPhase = 1 // 1 = Horizontal, 2 = Vertical
+    private var currentPhase = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cuidado_visual)
 
-        // Inicializar vistas
-        ivPupila = findViewById(R.id.iv_pupila_movil) // Asegúrate que este ID exista en tu XML nuevo
+        ivPupila = findViewById(R.id.iv_pupila_movil)
 
-        // 1. Configurar el botón de retroceso
         findViewById<View>(R.id.btn_back).setOnClickListener {
             showExitConfirmationDialog()
         }
 
-        // 2. Configurar el botón de Ayuda
         findViewById<View>(R.id.btn_help).setOnClickListener {
             val dialog = AyudaCuidadoVisualDialog()
             dialog.show(supportFragmentManager, "AyudaCuidadoVisual")
         }
 
-        // 3. Lógica inicial
         updateTimerText()
         setupTimerControls()
     }
@@ -71,48 +67,58 @@ class CuidadoVisualActivity : AppCompatActivity() {
     }
 
     /**
-     * Inicia la animación de la pupila según la fase actual (1=Horizontal, 2=Vertical).
+     * Inicia la animación con velocidad constante usando Keyframes.
+     * Ciclo: Centro -> Extremo A (3s) -> Pausa (2s) -> Extremo B (6s) -> Pausa (2s) -> Centro (3s)
+     * Total Ciclo: 16 segundos.
      */
     private fun startEyeAnimation(phase: Int) {
-        // Si ya hay una animación corriendo, la cancelamos para empezar la nueva
+        if (currentAnimator != null && currentAnimator!!.isPaused && currentPhase == phase) {
+            currentAnimator?.resume()
+            return
+        }
         currentAnimator?.cancel()
 
-        // Rango de movimiento en píxeles (ajusta según el tamaño de tu ojo)
         val range = 50f
+        val propertyName = if (phase == 1) "translationX" else "translationY"
 
-        if (phase == 1) {
-            // FASE 1: Movimiento Horizontal (Izquierda <-> Derecha)
-            // Mueve translationX desde 0 a -range, luego a +range
-            currentAnimator = ObjectAnimator.ofFloat(ivPupila, "translationX", 0f, -range, range, 0f).apply {
-                duration = 2000 // 2 segundos por ciclo completo
-                repeatCount = ValueAnimator.INFINITE
-                interpolator = AccelerateDecelerateInterpolator() // Movimiento suave
-                start()
-            }
-        } else {
-            // FASE 2: Movimiento Vertical (Arriba <-> Abajo)
-            // Aseguramos que X esté en 0 antes de empezar Y
-            ivPupila.translationX = 0f
+        // Aseguramos la otra propiedad en 0
+        if (phase == 1) ivPupila.translationY = 0f else ivPupila.translationX = 0f
 
-            currentAnimator = ObjectAnimator.ofFloat(ivPupila, "translationY", 0f, -range, range, 0f).apply {
-                duration = 2000
-                repeatCount = ValueAnimator.INFINITE
-                interpolator = AccelerateDecelerateInterpolator()
-                start()
-            }
+        // DEFINICIÓN DE TIEMPOS (Total 16s = 100%)
+        // 0s (0%): Centro (0f)
+        // 3s (18.75%): Extremo Negativo (-50f) -> Movimiento Lento
+        // 5s (31.25%): Extremo Negativo (-50f) -> Pausa
+        // 11s (68.75%): Extremo Positivo (50f) -> Movimiento Largo Lento (Doble distancia, doble tiempo)
+        // 13s (81.25%): Extremo Positivo (50f) -> Pausa
+        // 16s (100%): Centro (0f) -> Movimiento Lento
+
+        val kf0 = Keyframe.ofFloat(0f, 0f)
+        val kf1 = Keyframe.ofFloat(0.1875f, -range)
+        val kf2 = Keyframe.ofFloat(0.3125f, -range)
+        val kf3 = Keyframe.ofFloat(0.6875f, range)
+        val kf4 = Keyframe.ofFloat(0.8125f, range)
+        val kf5 = Keyframe.ofFloat(1f, 0f)
+
+        val pvh = PropertyValuesHolder.ofKeyframe(propertyName, kf0, kf1, kf2, kf3, kf4, kf5)
+
+        currentAnimator = ObjectAnimator.ofPropertyValuesHolder(ivPupila, pvh).apply {
+            duration = 16000 // 16 segundos por ciclo completo
+            repeatCount = ValueAnimator.INFINITE
+            interpolator = LinearInterpolator() // Usamos Lineal porque los Keyframes ya definen la aceleración/pausa
+            start()
         }
         currentPhase = phase
     }
 
-    /**
-     * Detiene la animación y centra la pupila.
-     */
     private fun stopEyeAnimation() {
         currentAnimator?.cancel()
         currentAnimator = null
-        // Reseteamos posición al centro
         ivPupila.translationX = 0f
         ivPupila.translationY = 0f
+    }
+
+    private fun pauseEyeAnimation() {
+        currentAnimator?.pause()
     }
 
     private fun startTimer() {
@@ -122,9 +128,9 @@ class CuidadoVisualActivity : AppCompatActivity() {
                 timeLeftMS = millisUntilFinished
                 updateTimerText()
 
-                // Lógica de cambio de fase de animación
+                // Cambio a la fase Vertical cuando quedan 32 segundos (aprox mitad)
                 if (millisUntilFinished <= SWITCH_TIME_MS && currentPhase == 1) {
-                    startEyeAnimation(2) // Cambiar a Vertical
+                    startEyeAnimation(2)
                 }
             }
 
@@ -132,23 +138,20 @@ class CuidadoVisualActivity : AppCompatActivity() {
                 timeLeftMS = 0
                 updateTimerText()
                 isTimerRunning = false
-
-                stopEyeAnimation() // Detener ojos
+                stopEyeAnimation()
                 btnPausePlay.setImageResource(R.drawable.ic_play)
-
                 Toast.makeText(this@CuidadoVisualActivity, "Rutina finalizada", Toast.LENGTH_LONG).show()
-                currentPhase = 1 // Resetear fase para la próxima vez
+                currentPhase = 1
             }
         }.start()
 
         isTimerRunning = true
         btnPausePlay.setImageResource(R.drawable.ic_pause)
 
-        // Iniciar la animación correspondiente al tiempo actual
         if (timeLeftMS > SWITCH_TIME_MS) {
-            startEyeAnimation(1) // Horizontal
+            startEyeAnimation(1)
         } else {
-            startEyeAnimation(2) // Vertical
+            startEyeAnimation(2)
         }
     }
 
@@ -164,7 +167,7 @@ class CuidadoVisualActivity : AppCompatActivity() {
             countDownTimer.cancel()
         }
         isTimerRunning = false
-        stopEyeAnimation() // Detenemos la animación visualmente
+        pauseEyeAnimation()
         btnPausePlay.setImageResource(R.drawable.ic_play)
     }
 
@@ -178,21 +181,22 @@ class CuidadoVisualActivity : AppCompatActivity() {
             if (isTimerRunning) {
                 pauseTimer()
             } else {
+                if (timeLeftMS <= 0) {
+                    timeLeftMS = TOTAL_TIME_MS
+                    updateTimerText()
+                    currentPhase = 1
+                    stopEyeAnimation()
+                }
                 startTimer()
             }
         }
 
         btnRestart.setOnClickListener {
             pauseTimer()
-
+            stopEyeAnimation()
             timeLeftMS = TOTAL_TIME_MS
             updateTimerText()
-            currentPhase = 1 // Volver a fase 1
-
-            // Asegurar que la pupila esté centrada
-            ivPupila.translationX = 0f
-            ivPupila.translationY = 0f
-
+            currentPhase = 1
             btnPausePlay.setImageResource(R.drawable.ic_play)
         }
     }
