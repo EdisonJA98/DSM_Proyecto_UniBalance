@@ -17,6 +17,12 @@ class NotificationReceiver : BroadcastReceiver() {
         val tipoPausa = intent.getStringExtra("TIPO_PAUSA") ?: "DECIDIR"
         val notificationId = intent.getIntExtra("NOTIFICATION_ID", 0)
 
+        // 💡 CAMBIO CLAVE: Eliminar la pausa de la lista AQUÍ
+        // Apenas suena la alarma, se considera "ya no pendiente"
+        if (notificationId != 0) {
+            PausasStorage.eliminarPausa(context, notificationId)
+        }
+
         // Definir a dónde lleva el clic en la notificación
         val targetIntent = when (tipoPausa) {
             "ESTIRAMIENTO" -> Intent(context, EstiramientoActivity::class.java)
@@ -24,11 +30,9 @@ class NotificationReceiver : BroadcastReceiver() {
             else -> Intent(context, PausasActivasActivity::class.java)
         }
 
-        // 💡 CLAVE: Pasamos el ID de la notificación a la actividad destino
-        // para que sepa qué pausa borrar de la lista
-        targetIntent.putExtra("NOTIFICATION_ID_TO_DELETE", notificationId)
-
         targetIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+        // Ya no necesitamos pasar el ID para borrar, porque ya lo borramos arriba
 
         val pendingIntent = PendingIntent.getActivity(
             context,

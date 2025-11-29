@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DSMProyecto</string>
+    <string name="app_name">UniBalance</string>
     <!-- Breathing Exercise -->
     <string name="breathing_exercise">Ejercicio de Respiración</string>
     <string name="breathing_subtitle">Respiración profunda para aliviar el estrés</string>
