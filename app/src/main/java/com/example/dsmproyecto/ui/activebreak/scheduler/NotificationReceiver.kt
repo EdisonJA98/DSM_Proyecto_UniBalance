@@ -7,7 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.drawable.Drawable
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.example.dsmproyecto.R
@@ -49,19 +49,27 @@ class NotificationReceiver : BroadcastReceiver() {
                 targetIntent = Intent(context, PausasActivasActivity::class.java)
                 tituloNotificacion = "UniBalance: Pausa Activa"
                 textoNotificacion = "Te toca un descanso. Elige tu actividad ahora."
-                iconResId = R.drawable.ic_help // O un icono genérico de la app
+                iconResId = R.drawable.ic_help
             }
         }
 
-        // Pasar el ID para manejo interno si fuera necesario
         targetIntent.putExtra("NOTIFICATION_ID_TO_DELETE", notificationId)
         targetIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
+        // 🔒 CORRECCIÓN DE SEGURIDAD (Flags compatibles)
+        // Verificamos la versión de Android para usar FLAG_IMMUTABLE solo si es soportado (API 23+)
+        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
+
+        // Creamos el PendingIntent usando los flags seguros calculados arriba
         val pendingIntent = PendingIntent.getActivity(
             context,
             notificationId,
             targetIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            flags
         )
 
         // 3. Convertir el icono vectorial a Bitmap para el Large Icon
@@ -69,14 +77,14 @@ class NotificationReceiver : BroadcastReceiver() {
 
         // 4. Construir la notificación
         val builder = NotificationCompat.Builder(context, "channel_pausas_activas")
-            .setSmallIcon(iconResId) // Icono pequeño en la barra de estado (debe ser blanco/transparente idealmente)
-            .setLargeIcon(largeIconBitmap) // Icono grande a color a la derecha/izquierda
-            .setContentTitle(tituloNotificacion) // Título personalizado "UniBalance..."
+            .setSmallIcon(iconResId)
+            .setLargeIcon(largeIconBitmap)
+            .setContentTitle(tituloNotificacion)
             .setContentText(textoNotificacion)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
-            .setColor(ContextCompat.getColor(context, R.color.color_accent_primary)) // Color del acento de la notificacion
+            .setColor(ContextCompat.getColor(context, R.color.color_accent_primary))
 
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(notificationId, builder.build())
@@ -84,7 +92,6 @@ class NotificationReceiver : BroadcastReceiver() {
 
     /**
      * Función utilitaria para convertir un VectorDrawable (XML) a Bitmap.
-     * Necesario para .setLargeIcon()
      */
     private fun vectorToBitmap(context: Context, drawableId: Int): Bitmap? {
         val drawable = ContextCompat.getDrawable(context, drawableId) ?: return null
