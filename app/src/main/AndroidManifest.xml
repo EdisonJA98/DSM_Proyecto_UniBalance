@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permiso para programar alarmas exactas (Android 12+) -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- Permiso para notificaciones (Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,6 +17,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DSMProyecto"
         tools:targetApi="31">
+
+        <!-- Receptor de Notificaciones -->
+        <receiver android:name=".ui.activebreak.scheduler.NotificationReceiver" />
+
+        <!-- Actividades -->
         <activity
             android:name=".ui.activebreak.scheduler.ProgramarPausaCompletaActivity"
             android:exported="false">

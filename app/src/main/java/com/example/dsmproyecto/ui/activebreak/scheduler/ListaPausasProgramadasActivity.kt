@@ -22,7 +22,7 @@ class ListaPausasProgramadasActivity : AppCompatActivity() {
         val descripcion: String
     )
 
-    // Lista simulada de alarmas (en el futuro vendrá de una Base de Datos)
+    // Lista simulada de alarmas
     private val listaAlarmas = arrayListOf(
         AlarmaPausa(1, "14:30 PM", "VISUAL", "Descanso visual"),
         AlarmaPausa(2, "16:00 PM", "ESTIRAMIENTO", "Ejercicios de estiramiento"),
@@ -47,7 +47,8 @@ class ListaPausasProgramadasActivity : AppCompatActivity() {
 
         // 2. Botón Flotante (Agregar Nueva)
         findViewById<View>(R.id.fab_add).setOnClickListener {
-            val intent = Intent(this, ProgramarTiempoActivity::class.java)
+            // 💡 CAMBIO: Ahora apunta a la pantalla unificada
+            val intent = Intent(this, ProgramarPausaCompletaActivity::class.java)
             startActivity(intent)
         }
 
@@ -59,7 +60,7 @@ class ListaPausasProgramadasActivity : AppCompatActivity() {
      * Dibuja la lista de alarmas o muestra el estado vacío.
      */
     private fun renderizarLista() {
-        // Limpiamos la vista antes de dibujar (por si llamamos a esta función al borrar)
+        // Limpiamos la vista antes de dibujar
         containerItems.removeAllViews()
 
         if (listaAlarmas.isEmpty()) {
@@ -82,11 +83,9 @@ class ListaPausasProgramadasActivity : AppCompatActivity() {
      * Infla el layout 'item_pausa_programada' y configura sus datos.
      */
     private fun agregarItemAlarma(alarma: AlarmaPausa) {
-        // Inflamos el XML del item
         val inflater = LayoutInflater.from(this)
         val itemView = inflater.inflate(R.layout.item_pausa_programada, containerItems, false)
 
-        // Referencias dentro del item
         val tvHora = itemView.findViewById<TextView>(R.id.tv_hora_programada)
         val tvTipo = itemView.findViewById<TextView>(R.id.tv_tipo_pausa)
         val ivIcono = itemView.findViewById<ImageView>(R.id.iv_pausa_icon)
@@ -105,18 +104,16 @@ class ListaPausasProgramadasActivity : AppCompatActivity() {
 
         // Configurar Botones de Acción
         btnEdit.setOnClickListener {
+            // Al editar, también deberíamos ir a la pantalla unificada (lógica futura)
             Toast.makeText(this, "Editar alarma de las ${alarma.hora}", Toast.LENGTH_SHORT).show()
-            // Aquí abrirías ProgramarTiempoActivity con los datos pre-cargados
         }
 
         btnDelete.setOnClickListener {
-            // Simular eliminación: Borrar de la lista y redibujar
             listaAlarmas.remove(alarma)
-            renderizarLista() // Actualiza la UI (si queda vacía, muestra el estado vacío)
+            renderizarLista()
             Toast.makeText(this, "Alarma eliminada", Toast.LENGTH_SHORT).show()
         }
 
-        // Añadir la vista inflada al contenedor vertical
         containerItems.addView(itemView)
     }
 }
