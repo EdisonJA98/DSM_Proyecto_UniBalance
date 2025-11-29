@@ -9,6 +9,7 @@ import android.animation.ValueAnimator
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -16,7 +17,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dsmproyecto.R
-// Importa tus diálogos
+import com.example.dsmproyecto.ui.activebreak.scheduler.PausasStorage // Importar el Storage
 
 class CuidadoVisualActivity : AppCompatActivity() {
 
@@ -38,6 +39,16 @@ class CuidadoVisualActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cuidado_visual)
+
+        // 💡 LÓGICA DE ELIMINACIÓN AUTOMÁTICA
+        // Verificamos si venimos de una notificación
+        val notificationId = intent.getIntExtra("NOTIFICATION_ID_TO_DELETE", 0)
+        if (notificationId != 0) {
+            // Si hay un ID válido, borramos esta pausa de la lista de programadas
+            PausasStorage.eliminarPausa(this, notificationId)
+            // Opcional: Mostrar un pequeño mensaje o log
+            // Toast.makeText(this, "Pausa iniciada desde notificación", Toast.LENGTH_SHORT).show()
+        }
 
         ivPupila = findViewById(R.id.iv_pupila_movil)
 
@@ -84,14 +95,6 @@ class CuidadoVisualActivity : AppCompatActivity() {
         // Aseguramos la otra propiedad en 0
         if (phase == 1) ivPupila.translationY = 0f else ivPupila.translationX = 0f
 
-        // DEFINICIÓN DE TIEMPOS (Total 16s = 100%)
-        // 0s (0%): Centro (0f)
-        // 3s (18.75%): Extremo Negativo (-50f) -> Movimiento Lento
-        // 5s (31.25%): Extremo Negativo (-50f) -> Pausa
-        // 11s (68.75%): Extremo Positivo (50f) -> Movimiento Largo Lento (Doble distancia, doble tiempo)
-        // 13s (81.25%): Extremo Positivo (50f) -> Pausa
-        // 16s (100%): Centro (0f) -> Movimiento Lento
-
         val kf0 = Keyframe.ofFloat(0f, 0f)
         val kf1 = Keyframe.ofFloat(0.1875f, -range)
         val kf2 = Keyframe.ofFloat(0.3125f, -range)
@@ -104,7 +107,7 @@ class CuidadoVisualActivity : AppCompatActivity() {
         currentAnimator = ObjectAnimator.ofPropertyValuesHolder(ivPupila, pvh).apply {
             duration = 16000 // 16 segundos por ciclo completo
             repeatCount = ValueAnimator.INFINITE
-            interpolator = LinearInterpolator() // Usamos Lineal porque los Keyframes ya definen la aceleración/pausa
+            interpolator = LinearInterpolator()
             start()
         }
         currentPhase = phase

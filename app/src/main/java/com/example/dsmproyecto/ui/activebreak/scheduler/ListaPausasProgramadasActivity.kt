@@ -1,6 +1,10 @@
 package com.example.dsmproyecto.ui.activebreak.scheduler
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,21 +18,6 @@ import com.example.dsmproyecto.R
 
 class ListaPausasProgramadasActivity : AppCompatActivity() {
 
-    // Modelo de datos simple para nuestras pruebas
-    data class AlarmaPausa(
-        val id: Int,
-        val hora: String,
-        val tipo: String, // "VISUAL", "ESTIRAMIENTO"
-        val descripcion: String
-    )
-
-    // Lista simulada de alarmas
-    private val listaAlarmas = arrayListOf(
-        AlarmaPausa(1, "14:30 PM", "VISUAL", "Descanso visual"),
-        AlarmaPausa(2, "16:00 PM", "ESTIRAMIENTO", "Ejercicios de estiramiento"),
-        AlarmaPausa(3, "17:45 PM", "VISUAL", "Descanso visual")
-    )
-
     private lateinit var containerItems: LinearLayout
     private lateinit var layoutEmptyState: LinearLayout
     private lateinit var scrollContainer: View
@@ -37,51 +26,43 @@ class ListaPausasProgramadasActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lista_pausas_programadas)
 
-        // Referencias UI
         containerItems = findViewById(R.id.ll_lista_items)
         layoutEmptyState = findViewById(R.id.layout_empty_state)
         scrollContainer = findViewById(R.id.scroll_container)
 
-        // 1. Botón Retroceso
         findViewById<View>(R.id.btn_back).setOnClickListener { finish() }
 
-        // 2. Botón Flotante (Agregar Nueva)
         findViewById<View>(R.id.fab_add).setOnClickListener {
-            // 💡 CAMBIO: Ahora apunta a la pantalla unificada
             val intent = Intent(this, ProgramarPausaCompletaActivity::class.java)
             startActivity(intent)
         }
+    }
 
-        // 3. Renderizar la lista
+    override fun onResume() {
+        super.onResume()
+        // Recargar la lista cada vez que volvemos a esta pantalla
         renderizarLista()
     }
 
-    /**
-     * Dibuja la lista de alarmas o muestra el estado vacío.
-     */
     private fun renderizarLista() {
-        // Limpiamos la vista antes de dibujar
         containerItems.removeAllViews()
 
+        // 💡 CARGAR DATOS REALES
+        val listaAlarmas = PausasStorage.obtenerPausas(this)
+
         if (listaAlarmas.isEmpty()) {
-            // Mostrar estado vacío
             layoutEmptyState.visibility = View.VISIBLE
             scrollContainer.visibility = View.GONE
         } else {
-            // Mostrar lista
             layoutEmptyState.visibility = View.GONE
             scrollContainer.visibility = View.VISIBLE
 
-            // Inflar un item por cada alarma
             for (alarma in listaAlarmas) {
                 agregarItemAlarma(alarma)
             }
         }
     }
 
-    /**
-     * Infla el layout 'item_pausa_programada' y configura sus datos.
-     */
     private fun agregarItemAlarma(alarma: AlarmaPausa) {
         val inflater = LayoutInflater.from(this)
         val itemView = inflater.inflate(R.layout.item_pausa_programada, containerItems, false)
@@ -89,31 +70,50 @@ class ListaPausasProgramadasActivity : AppCompatActivity() {
         val tvHora = itemView.findViewById<TextView>(R.id.tv_hora_programada)
         val tvTipo = itemView.findViewById<TextView>(R.id.tv_tipo_pausa)
         val ivIcono = itemView.findViewById<ImageView>(R.id.iv_pausa_icon)
-        val btnEdit = itemView.findViewById<ImageButton>(R.id.btn_edit)
         val btnDelete = itemView.findViewById<ImageButton>(R.id.btn_delete)
 
-        // Asignar datos
-        tvHora.text = alarma.hora
+        // Ocultar botón editar por ahora (implementación futura)
+        itemView.findViewById<ImageButton>(R.id.btn_edit).visibility = View.GONE
+
+        // Asignar datos reales
+        tvHora.text = alarma.horaFormato
         tvTipo.text = alarma.descripcion
 
         if (alarma.tipo == "VISUAL") {
             ivIcono.setImageResource(R.drawable.ic_eye)
-        } else {
+        } else if (alarma.tipo == "ESTIRAMIENTO") {
             ivIcono.setImageResource(R.drawable.ic_stretch)
-        }
-
-        // Configurar Botones de Acción
-        btnEdit.setOnClickListener {
-            // Al editar, también deberíamos ir a la pantalla unificada (lógica futura)
-            Toast.makeText(this, "Editar alarma de las ${alarma.hora}", Toast.LENGTH_SHORT).show()
+        } else {
+            ivIcono.setImageResource(R.drawable.ic_help)
         }
 
         btnDelete.setOnClickListener {
-            listaAlarmas.remove(alarma)
-            renderizarLista()
-            Toast.makeText(this, "Alarma eliminada", Toast.LENGTH_SHORT).show()
+            cancelarAlarmaDelSistema(alarma.id) // Cancelar PendingIntent
+            PausasStorage.eliminarPausa(this, alarma.id) // Borrar de almacenamiento
+            renderizarLista() // Actualizar UI
+            Toast.makeText(this, "Alarma cancelada", Toast.LENGTH_SHORT).show()
         }
 
         containerItems.addView(itemView)
+    }
+
+    private fun cancelarAlarmaDelSistema(notificationId: Int) {
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, NotificationReceiver::class.java)
+
+        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            notificationId,
+            intent,
+            flags
+        )
+
+        alarmManager.cancel(pendingIntent)
     }
 }

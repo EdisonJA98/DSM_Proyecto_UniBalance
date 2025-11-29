@@ -21,8 +21,12 @@ class NotificationReceiver : BroadcastReceiver() {
         val targetIntent = when (tipoPausa) {
             "ESTIRAMIENTO" -> Intent(context, EstiramientoActivity::class.java)
             "VISUAL" -> Intent(context, CuidadoVisualActivity::class.java)
-            else -> Intent(context, PausasActivasActivity::class.java) // "Decidir" lleva al menú
+            else -> Intent(context, PausasActivasActivity::class.java)
         }
+
+        // 💡 CLAVE: Pasamos el ID de la notificación a la actividad destino
+        // para que sepa qué pausa borrar de la lista
+        targetIntent.putExtra("NOTIFICATION_ID_TO_DELETE", notificationId)
 
         targetIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
@@ -35,7 +39,7 @@ class NotificationReceiver : BroadcastReceiver() {
 
         // Construir la notificación
         val builder = NotificationCompat.Builder(context, "channel_pausas_activas")
-            .setSmallIcon(R.drawable.ic_eye) // Asegúrate de tener un icono válido aquí
+            .setSmallIcon(R.drawable.ic_eye) // Asegúrate de tener un icono válido
             .setContentTitle("¡Hora de tu Pausa Activa!")
             .setContentText(getMensajePausa(tipoPausa))
             .setPriority(NotificationCompat.PRIORITY_HIGH)

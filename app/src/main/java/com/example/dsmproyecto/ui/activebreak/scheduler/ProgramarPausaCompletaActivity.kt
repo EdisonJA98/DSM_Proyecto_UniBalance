@@ -22,6 +22,9 @@ import androidx.core.content.ContextCompat
 import com.example.dsmproyecto.ui.MainActivity
 import com.example.dsmproyecto.R
 import java.util.Calendar
+import java.text.SimpleDateFormat
+import java.util.Locale
+
 
 class ProgramarPausaCompletaActivity : AppCompatActivity() {
 
@@ -110,32 +113,28 @@ class ProgramarPausaCompletaActivity : AppCompatActivity() {
     private fun programarAlarma(minutos: Int, tipo: String) {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
+        // Generamos un ID único basado en el tiempo actual
+        val notificationId = System.currentTimeMillis().toInt()
+
         val intent = Intent(this, NotificationReceiver::class.java).apply {
             putExtra("TIPO_PAUSA", tipo)
-            putExtra("NOTIFICATION_ID", System.currentTimeMillis().toInt()) // ID único
+            putExtra("NOTIFICATION_ID", notificationId)
         }
 
-        // CORRECCIÓN 2: Calcular flags compatibles con versiones antiguas (API 21)
         val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         } else {
             PendingIntent.FLAG_UPDATE_CURRENT
         }
 
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            0,
-            intent,
-            flags
-        )
+        val pendingIntent = PendingIntent.getBroadcast(this, notificationId, intent, flags)
 
-        // Calcular tiempo de disparo (Ahora + minutos)
-        val triggerTime = Calendar.getInstance().timeInMillis + (minutos * 60 * 1000)
+        // Calcular tiempo de disparo
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.MINUTE, minutos)
+        val triggerTime = calendar.timeInMillis
 
-        // Programar alarma
         try {
-            // CORRECCIÓN 3: Verificar versión para usar setExactAndAllowWhileIdle (API 23+)
-            // Si es Android 12+ (API 31/S), verificamos permiso de alarmas exactas
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 if (alarmManager.canScheduleExactAlarms()) {
                     alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
@@ -143,16 +142,16 @@ class ProgramarPausaCompletaActivity : AppCompatActivity() {
                     alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                 }
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                // Para Android 6 a 11
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
             } else {
-                // Para Android 5 (Lollipop)
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
             }
 
+            // 💡 NUEVO: Guardar en el historial (PausasStorage)
+            guardarEnHistorial(notificationId, calendar, tipo)
+
             Toast.makeText(this, "¡Alarma programada en $minutos minutos!", Toast.LENGTH_LONG).show()
 
-            // Volver al Home
             val intentHome = Intent(this, MainActivity::class.java)
             intentHome.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intentHome)
@@ -161,6 +160,24 @@ class ProgramarPausaCompletaActivity : AppCompatActivity() {
         } catch (e: SecurityException) {
             Toast.makeText(this, "Error de permisos de alarma", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    // Función auxiliar para formatear y guardar
+    private fun guardarEnHistorial(id: Int, calendar: Calendar, tipoCodigo: String) {
+        // 1. Formatear la hora (ej: "14:30")
+        val formatoHora = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val horaTexto = formatoHora.format(calendar.time)
+
+        // 2. Obtener descripción legible
+        val descripcion = when(tipoCodigo) {
+            "ESTIRAMIENTO" -> "Ejercicios de estiramiento"
+            "VISUAL" -> "Descanso visual"
+            else -> "Pausa por definir"
+        }
+
+        // 3. Crear objeto y guardar
+        val nuevaPausa = AlarmaPausa(id, horaTexto, tipoCodigo, descripcion)
+        PausasStorage.guardarPausa(this, nuevaPausa)
     }
 
     private fun createNotificationChannel() {

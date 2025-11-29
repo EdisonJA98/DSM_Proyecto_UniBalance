@@ -9,7 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dsmproyecto.R
-// La clase ConfirmExitEstiramientoDialog está en este mismo paquete.
+import com.example.dsmproyecto.ui.activebreak.scheduler.PausasStorage // Importar el Storage
 
 class EstiramientoActivity : AppCompatActivity() {
 
@@ -26,30 +26,39 @@ class EstiramientoActivity : AppCompatActivity() {
     private lateinit var ivPasoIzquierdo: ImageView
     private lateinit var ivPasoDerecho: ImageView
 
-    // Estado actual: 1 = Izquierda (Paso 1), 2 = Derecha (Paso 2)
     private var currentStep: Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_estiramiento)
 
+        // 💡 LÓGICA DE ELIMINACIÓN AUTOMÁTICA
+        val notificationId = intent.getIntExtra("NOTIFICATION_ID_TO_DELETE", 0)
+        if (notificationId != 0) {
+            PausasStorage.eliminarPausa(this, notificationId)
+        }
+
+        // Inicializar vistas
         ivPasoIzquierdo = findViewById(R.id.iv_paso_izquierdo)
         ivPasoDerecho = findViewById(R.id.iv_paso_derecho)
         tvInstruccion = findViewById(R.id.tv_instruccion)
 
+        // 1. Configurar el botón de retroceso (Back Button)
         findViewById<View>(R.id.btn_back).setOnClickListener {
             showExitConfirmationDialog()
         }
 
+        // 2. Configurar el botón de Ayuda
         findViewById<View>(R.id.btn_help).setOnClickListener {
             val dialog = AyudaEstiramientoDialog()
             dialog.show(supportFragmentManager, "AyudaEstiramiento")
         }
 
+        // 3. Configurar Temporizador y Controles iniciales
         updateTimerText()
         setupTimerControls()
 
-        // Mensaje inicial de bienvenida
+        // Mensaje inicial
         tvInstruccion.text = "Pulsa play para comenzar"
     }
 
@@ -68,9 +77,11 @@ class EstiramientoActivity : AppCompatActivity() {
     private fun switchStep(step: Int) {
         currentStep = step
         if (step == 1) {
+            // Paso 1 Activo (Izquierda)
             ivPasoIzquierdo.setBackgroundResource(R.drawable.bg_paso_activo)
             ivPasoDerecho.setBackgroundResource(R.drawable.bg_paso_inactivo)
         } else if (step == 2) {
+            // Paso 2 Activo (Derecha)
             ivPasoIzquierdo.setBackgroundResource(R.drawable.bg_paso_inactivo)
             ivPasoDerecho.setBackgroundResource(R.drawable.bg_paso_activo)
         }
@@ -99,6 +110,7 @@ class EstiramientoActivity : AppCompatActivity() {
                 timeLeftMS = millisUntilFinished
                 updateTimerText()
 
+                // Lógica de cambio de paso: Si quedan 10s o menos, pasamos al paso 2
                 if (millisUntilFinished <= SWITCH_TIME_MS && currentStep == 1) {
                     switchStep(2)
                 }
@@ -113,7 +125,7 @@ class EstiramientoActivity : AppCompatActivity() {
                 btnPausePlay.setImageResource(R.drawable.ic_play)
 
                 tvInstruccion.text = "Rutina finalizada. ¡Bien hecho!"
-                Toast.makeText(this@EstiramientoActivity, "Rutina de estiramiento finalizada", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@EstiramientoActivity, "Rutina finalizada", Toast.LENGTH_LONG).show()
 
                 switchStep(1)
             }
@@ -139,7 +151,6 @@ class EstiramientoActivity : AppCompatActivity() {
         isTimerRunning = false
         btnPausePlay.setImageResource(R.drawable.ic_play)
 
-        // Mensaje de retroalimentación de pausa
         tvInstruccion.text = "Entrenamiento pausado, pulse play para continuar"
     }
 
@@ -147,17 +158,16 @@ class EstiramientoActivity : AppCompatActivity() {
         btnPausePlay = findViewById(R.id.btn_pause_play)
         val btnRestart = findViewById<ImageButton>(R.id.btn_restart)
 
+        // Estado inicial
         btnPausePlay.setImageResource(R.drawable.ic_play)
         switchStep(1)
 
-        // Lógica del botón PAUSA / PLAY
+        // Botón PAUSA / PLAY
         btnPausePlay.setOnClickListener {
             if (isTimerRunning) {
                 pauseTimer()
             } else {
-                // 💡 CAMBIO CLAVE: Lógica de auto-reinicio si el tiempo terminó
                 if (timeLeftMS <= 0) {
-                    // Restablecer todas las variables al estado inicial
                     timeLeftMS = TOTAL_TIME_MS
                     updateTimerText()
                     currentStep = 1
@@ -167,17 +177,15 @@ class EstiramientoActivity : AppCompatActivity() {
             }
         }
 
-        // Lógica del botón REINICIAR
+        // Botón REINICIAR
         btnRestart.setOnClickListener {
             pauseTimer()
 
             timeLeftMS = TOTAL_TIME_MS
             updateTimerText()
-            currentStep = 1
             switchStep(1)
             btnPausePlay.setImageResource(R.drawable.ic_play)
 
-            // Restaurar mensaje inicial al reiniciar
             tvInstruccion.text = "Pulsa play para comenzar"
         }
     }
