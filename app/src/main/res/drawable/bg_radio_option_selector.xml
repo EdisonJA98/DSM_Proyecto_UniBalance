@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 1. ESTADO SELECCIONADO (Checked = true) -->
+    <item android:state_checked="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/white" />
+            <!-- Borde Turquesa un poco más grueso para indicar selección -->
+            <stroke
+                android:width="2dp"
+                android:color="@color/color_accent_primary" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+
+    <!-- 2. ESTADO NORMAL (No seleccionado) -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/white" />
+            <!-- Borde Turquesa muy fino (1dp) como pediste -->
+            <stroke
+                android:width="2dp"
+                android:color="@color/color_accent_primary" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+
+</selector>

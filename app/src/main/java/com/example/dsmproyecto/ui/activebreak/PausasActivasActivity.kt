@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.dsmproyecto.R
 import com.example.dsmproyecto.ui.activebreak.eyecare.CuidadoVisualActivity
+import com.example.dsmproyecto.ui.activebreak.scheduler.ProgramarTiempoActivity
 import com.example.dsmproyecto.ui.activebreak.stretchingexercises.EstiramientoActivity
 
 class PausasActivasActivity : AppCompatActivity() {
@@ -27,7 +28,8 @@ class PausasActivasActivity : AppCompatActivity() {
 
         // 3. Configurar el botón "Programar"
         findViewById<View>(R.id.btn_programar).setOnClickListener {
-            Toast.makeText(this, "Funcionalidad 'Programar' Pendiente", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, ProgramarTiempoActivity::class.java)
+            startActivity(intent)
         }
     }
 
