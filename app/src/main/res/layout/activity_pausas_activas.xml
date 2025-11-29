@@ -6,20 +6,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color_fondo_general"
-    tools:context=".ui.activebreak.PausasActivasActivity"> <ImageButton
-    android:id="@+id/btn_back"
-    android:layout_width="48dp"
-    android:layout_height="48dp"
-    android:layout_marginStart="20dp"
-    android:layout_marginTop="20dp"
-    android:background="@drawable/bg_icon_circle"
-    android:elevation="4dp"
-    android:src="@drawable/ic_arrow_back"
-    app:tint="@color/black"
-    android:contentDescription="Botón de retroceso"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent" />
+    tools:context=".ui.activebreak.PausasActivasActivity">
 
+    <!-- Botones de Cabecera -->
+    <ImageButton
+        android:id="@+id/btn_back"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_icon_circle"
+        android:elevation="4dp"
+        android:src="@drawable/ic_arrow_back"
+        app:tint="@color/black"
+        android:contentDescription="Botón de retroceso"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Título -->
     <TextView
         android:id="@+id/tv_header_title"
         android:layout_width="wrap_content"
@@ -37,11 +41,12 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="50dp" />
 
+    <!-- Subtítulo -->
     <TextView
         android:id="@+id/tv_choose_descanso"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:text="Elige tu descanso ideal"
         android:textColor="@color/gray_subtitle"
         android:textSize="16sp"
@@ -49,13 +54,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_header_title" />
 
+    <!-- Opciones (Estiramiento y Visual) -->
     <LinearLayout
         android:id="@+id/options_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="20dp"
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@+id/tv_choose_descanso"
         app:layout_constraintStart_toStartOf="parent"
@@ -76,17 +82,40 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_programar"
-        android:layout_width="0dp"
+    <!-- 💡 CAMBIO: Contenedor de Botones Inferiores (Programar y Ver) -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="32dp"
         android:layout_marginBottom="32dp"
-        android:text="Programar"
-        android:textSize="18sp"
-        android:padding="12dp"
-        android:background="@drawable/bg_rounded_button"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/options_container"
-        app:layout_constraintEnd_toEndOf="@+id/options_container"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Botón 1: Programar Nueva (Turquesa) -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_programar_nueva"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Programar pausa activa"
+            android:textSize="16sp"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:background="@drawable/bg_rounded_button"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Botón 2: Ver Programadas -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_ver_programadas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ver pausas programadas"
+            android:textSize="16sp"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:background="@drawable/bg_button_gray"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

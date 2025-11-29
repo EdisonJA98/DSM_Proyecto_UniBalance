@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_fondo_general"
+    android:padding="24dp">
+
+    <!-- Cabecera con Botón de Retroceso y Ayuda -->
+    <ImageButton
+        android:id="@+id/btn_back"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_icon_circle"
+        android:elevation="4dp"
+        android:src="@drawable/ic_arrow_back"
+        app:tint="@color/black"
+        android:contentDescription="Volver"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btn_help"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_icon_circle"
+        android:elevation="4dp"
+        android:src="@drawable/ic_help"
+        app:tint="@color/black"
+        android:contentDescription="Ayuda"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Título Principal -->
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Programar Pausa"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="@color/color_text_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_back" />
+
+    <TextView
+        android:id="@+id/tv_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Configura tu recordatorio personalizado"
+        android:textSize="16sp"
+        android:textColor="@color/gray_subtitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+
+    <!-- SECCIÓN 1: TIEMPO -->
+    <TextView
+        android:id="@+id/lbl_tiempo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="Tiempo (minutos)"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_subtitle" />
+
+    <EditText
+        android:id="@+id/et_tiempo_minutos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_input_ppa_turquesa"
+        android:padding="16dp"
+        android:inputType="number"
+        android:hint="Ej. 45"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/lbl_tiempo" />
+
+    <TextView
+        android:id="@+id/tv_hint_tiempo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Mínimo 1 minuto"
+        android:textSize="12sp"
+        android:textColor="@color/gray_subtitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_tiempo_minutos" />
+
+    <!-- SECCIÓN 2: TIPO DE PAUSA (Spinner) -->
+    <TextView
+        android:id="@+id/lbl_tipo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Tipo de Pausa Activa"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_hint_tiempo" />
+
+    <!-- Contenedor estético para el Spinner -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_option_white_rounded"
+        android:padding="4dp"
+        app:layout_constraintTop_toBottomOf="@+id/lbl_tipo">
+
+        <Spinner
+            android:id="@+id/spinner_pausas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:background="@drawable/bg_input_ppa_turquesa"
+            tools:ignore="SpeakableTextPresentCheck" />
+    </FrameLayout>
+
+    <!-- Botón Confirmar -->
+    <Button
+        android:id="@+id/btn_confirmar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="Confirmar Programación"
+        android:textSize="18sp"
+        android:padding="12dp"
+        android:textColor="@color/white"
+        android:background="@drawable/bg_rounded_button"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

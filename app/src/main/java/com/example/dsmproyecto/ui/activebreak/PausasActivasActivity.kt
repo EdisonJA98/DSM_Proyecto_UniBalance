@@ -9,8 +9,9 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.dsmproyecto.R
 import com.example.dsmproyecto.ui.activebreak.eyecare.CuidadoVisualActivity
-import com.example.dsmproyecto.ui.activebreak.scheduler.ProgramarTiempoActivity
 import com.example.dsmproyecto.ui.activebreak.stretchingexercises.EstiramientoActivity
+import com.example.dsmproyecto.ui.activebreak.scheduler.ListaPausasProgramadasActivity
+import com.example.dsmproyecto.ui.activebreak.scheduler.ProgramarPausaCompletaActivity
 
 class PausasActivasActivity : AppCompatActivity() {
 
@@ -26,11 +27,8 @@ class PausasActivasActivity : AppCompatActivity() {
         // 2. Configurar las opciones del menú
         setupPausasOptions()
 
-        // 3. Configurar el botón "Programar"
-        findViewById<View>(R.id.btn_programar).setOnClickListener {
-            val intent = Intent(this, ProgramarTiempoActivity::class.java)
-            startActivity(intent)
-        }
+        // 3. Configurar Botones de Programación
+        setupBottomButtons()
     }
 
     /**
@@ -48,7 +46,7 @@ class PausasActivasActivity : AppCompatActivity() {
             iconResId = R.drawable.ic_stretch // Ícono para pausas ergonómicas
         )
 
-        // Evento de clic: El flujo principal dice que lleva a la animación de estiramiento (20s) [cite: 16, 17]
+        // Evento de clic: El flujo principal dice que lleva a la animación de estiramiento (20s)
         estiramientoView.setOnClickListener {
             val intent = Intent(this, EstiramientoActivity::class.java)
             startActivity(intent)
@@ -64,9 +62,8 @@ class PausasActivasActivity : AppCompatActivity() {
             iconResId = R.drawable.ic_eye // Ícono para cuidado visual
         )
 
-        // Evento de clic: El flujo principal dice que lleva a la animación de ejercicios oculares (20s) [cite: 10]
+        // Evento de clic: El flujo principal dice que lleva a la animación de ejercicios oculares
         descansoVisualView.setOnClickListener {
-            // Aquí iría el Intent a la Activity de la Rutina de Cuidado Visual
             val intent = Intent(this, CuidadoVisualActivity::class.java)
             startActivity(intent)
         }
@@ -83,5 +80,24 @@ class PausasActivasActivity : AppCompatActivity() {
         // Asignamos los valores
         titleTextView.text = title
         iconImageView.setImageResource(iconResId)
+    }
+
+    /**
+     * Configura los botones de Programar Nueva y Ver Historial.
+     */
+    private fun setupBottomButtons() {
+        // Botón 1: Programar Nueva (Lleva a la pantalla unificada de programación)
+        findViewById<View>(R.id.btn_programar_nueva).setOnClickListener {
+            // 💡 CAMBIO: Apunta a la nueva Activity unificada
+            val intent = Intent(this, ProgramarPausaCompletaActivity::class.java)
+            startActivity(intent)
+        }
+
+        // Botón 2: Ver Programadas (Lleva a la lista/historial)
+        findViewById<View>(R.id.btn_ver_programadas).setOnClickListener {
+            // 💡 CONEXIÓN: Abre la lista de historial
+            val intent = Intent(this, ListaPausasProgramadasActivity::class.java)
+            startActivity(intent)
+        }
     }
 }

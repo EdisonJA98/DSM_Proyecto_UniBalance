@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Fondo Turquesa Suave (El mismo de los círculos de iconos) -->
+    <solid android:color="@color/color_icon_background" />
+
+    <!-- Borde Turquesa Oscuro (2dp) -->
+    <stroke
+        android:width="3dp"
+        android:color="#00796B" /> <!-- Un turquesa oscuro sólido para contraste -->
+
+    <corners android:radius="12dp" />
+
+</shape>

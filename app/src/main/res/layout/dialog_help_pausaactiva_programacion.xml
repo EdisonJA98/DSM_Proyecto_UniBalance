@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_dialog_rounded"
+    android:padding="24dp"
+    android:layout_gravity="center">
+
+    <ImageButton
+        android:id="@+id/btn_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:src="@drawable/ic_close"
+        android:background="@null"
+        android:contentDescription="Cerrar"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¿Cómo funciona?"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/color_accent_primary"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:lineSpacingExtra="4dp"
+        android:text="1. Ingresa el tiempo en minutos tras el cual deseas recibir el recordatorio.\n\n2. Selecciona qué tipo de pausa quieres realizar o elige 'Decidir después' para elegir en el momento.\n\n3. Recibirás una notificación cuando el tiempo termine."/>
+
+</LinearLayout>
