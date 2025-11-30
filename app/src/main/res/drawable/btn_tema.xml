@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!-- El color turquesa que definimos antes -->
+    <solid android:color="@color/color_accent_primary" />
+
+    <!-- Radio alto para que parezca una pastilla (pill shape) -->
+    <corners android:radius="50dp" />
+</shape>

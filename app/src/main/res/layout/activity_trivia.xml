@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    android:padding="16dp"
+    tools:context=".ui.trivia.TriviaActivity"> <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="14dp">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_arrow_back"
+            android:scaleType="fitCenter"
+            android:layout_alignParentStart="true"
+            app:tint="@color/black"
+            tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/btnHelp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_trivia"
+            android:scaleType="fitCenter"
+            android:layout_alignParentEnd="true"
+            app:tint="@color/black"
+            tools:ignore="ContentDescription" />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/btn_tema"
+        android:elevation="4dp"
+        android:paddingStart="40dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="40dp"
+        android:paddingBottom="12dp"
+        android:text="Trivia de Bienestar"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:gravity="center"
+        android:text="Pon a prueba tus conocimientos sobre salud"
+        android:textColor="@color/gray_subtitle"
+        android:textSize="14sp" />
+
+    <LinearLayout
+        android:id="@+id/layoutTemas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Elige el Tema"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_marginBottom="24dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnTemaAutocuidado"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Autocuidado"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@drawable/btn_tema"
+            android:textAllCaps="false"
+            android:layout_marginBottom="16dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnTemaEjercicio"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Ejercicio"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@drawable/btn_tema"
+            android:textAllCaps="false"
+            android:layout_marginBottom="16dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnTemaSaludMental"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Salud Mental"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@drawable/btn_tema"
+            android:textAllCaps="false"
+            android:layout_marginBottom="16dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnTemaNutricion"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Nutrición"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@drawable/btn_tema"
+            android:textAllCaps="false"
+            android:layout_marginBottom="16dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnTemaHabitos"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Hábitos"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@drawable/btn_tema"
+            android:textAllCaps="false"
+            android:layout_marginBottom="16dp"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/layoutPregunta"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
+
+            <TextView
+                android:id="@+id/txtContadorPreguntas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pregunta 1 de 5"
+                android:textSize="16sp"
+                android:textColor="#757575"
+                android:layout_centerVertical="true"/>
+
+            <TextView
+                android:id="@+id/txtNivelDificultad"  android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DIFICULTAD"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#673AB7"
+                android:background="@drawable/bg_badge_difficulty"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"/>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/txtPregunta"
+            android:text="¿Pregunta?"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="30dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnOpcion1"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/bg_answer_pill"
+            android:textColor="#505050"
+            android:textStyle="bold"
+            android:text="RESPUESTA"
+            android:gravity="center_vertical|start"
+            android:paddingStart="32dp"
+            android:elevation="4dp"
+            android:stateListAnimator="@null"
+            android:layout_marginBottom="16dp"
+            android:textAllCaps="true"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnOpcion2"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/bg_answer_pill"
+            android:textColor="#505050"
+            android:textStyle="bold"
+            android:text="RESPUESTA"
+            android:gravity="center_vertical|start"
+            android:paddingStart="32dp"
+            android:elevation="4dp"
+            android:stateListAnimator="@null"
+            android:layout_marginBottom="16dp"
+            android:textAllCaps="true"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnOpcion3"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/bg_answer_pill"
+            android:textColor="#505050"
+            android:textStyle="bold"
+            android:text="RESPUESTA"
+            android:gravity="center_vertical|start"
+            android:paddingStart="32dp"
+            android:elevation="4dp"
+            android:stateListAnimator="@null"
+            android:layout_marginBottom="16dp"
+            android:textAllCaps="true"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnOpcion4"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/bg_answer_pill"
+            android:textColor="#505050"
+            android:textStyle="bold"
+            android:text="RESPUESTA"
+            android:gravity="center_vertical|start"
+            android:paddingStart="32dp"
+            android:elevation="4dp"
+            android:stateListAnimator="@null"
+            android:layout_marginBottom="32dp"
+            android:textAllCaps="true"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSiguiente"
+            android:layout_width="160dp"
+            android:layout_height="50dp"
+            android:text="Siguiente ➜"
+            android:textColor="@color/white"
+            android:background="@drawable/btn_tema"
+            android:layout_gravity="center"
+            android:visibility="invisible"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutResultados"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Resultados"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Has completado la trivia"
+            android:textColor="@color/gray_subtitle"
+            android:textSize="16sp"
+            android:layout_marginBottom="30dp"/>
+
+        <FrameLayout
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginBottom="20dp">
+
+            <ProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:indeterminate="false"
+                android:progressDrawable="@drawable/circular_progress_bg"
+                android:progress="100"
+                style="?android:attr/progressBarStyleHorizontal" />
+
+            <ProgressBar
+                android:id="@+id/progressCircular"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:indeterminate="false"
+                android:progressDrawable="@drawable/circular_progress_fill"
+                android:progress="20"
+                android:max="100"
+                style="?android:attr/progressBarStyleHorizontal" />
+
+            <TextView
+                android:id="@+id/txtPorcentaje"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="20%"
+                android:textColor="#5CC7C2"
+                android:textSize="32sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/txtResultado"
+            android:layout_width="wrap_content"  android:layout_height="wrap_content" android:text="1 de 5 respuestas correctas"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp" />
+
+        <ProgressBar
+            android:id="@+id/progressHorizontal"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:layout_marginBottom="10dp"
+            android:max="100"
+            android:progress="20"
+            android:progressTint="#5CC7C2"
+            android:backgroundTint="#E0E0E0" />
+
+        <TextView
+            android:id="@+id/txtFeedback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hay oportunidades para aprender más sobre este tema."
+            android:gravity="center"
+            android:textColor="@color/gray_subtitle"
+            android:textSize="14sp"
+            android:layout_marginBottom="24dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_recommendation"
+            android:padding="24dp"
+            android:gravity="center"
+            android:layout_marginBottom="30dp">
+            <TextView
+                android:id="@+id/txtRecomendacion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recomendacion"
+                android:textStyle="bold"
+                android:textColor="#00695C"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnInicio"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:text="Inicio"
+                android:textColor="@color/white"
+                android:background="@drawable/btn_tema"
+                android:layout_marginEnd="8dp"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnReiniciar"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:text="Jugar de nuevo"
+                android:textColor="@color/black"
+                android:background="@drawable/btn_outline_gray"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
+</ScrollView>

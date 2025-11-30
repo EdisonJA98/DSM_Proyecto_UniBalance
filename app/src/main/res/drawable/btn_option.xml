@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Estado seleccionado / correcta -->
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#dcfce7"/> <!-- Verde suave -->
+            <stroke android:width="3dp" android:color="#10b981"/> <!-- Borde verde -->
+            <corners android:radius="16dp"/>
+            <padding android:left="16dp" android:top="16dp"
+                android:right="16dp" android:bottom="16dp"/>
+        </shape>
+    </item>
+
+    <!-- Estado normal -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#ffffff"/>
+            <stroke android:width="2dp" android:color="#e2e8f0"/> <!-- Borde gris claro -->
+            <corners android:radius="16dp"/>
+            <padding android:left="16dp" android:top="16dp"
+                android:right="16dp" android:bottom="16dp"/>
+        </shape>
+    </item>
+</selector>
