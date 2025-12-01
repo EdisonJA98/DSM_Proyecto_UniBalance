@@ -9,6 +9,7 @@ import android.widget.TextView
 import com.example.dsmproyecto.R
 import com.example.dsmproyecto.ui.activebreak.PausasActivasActivity
 import com.example.dsmproyecto.ui.breathing.BreathingActivity
+import com.example.dsmproyecto.ui.trivia.TriviaActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,6 +97,11 @@ class MainActivity : AppCompatActivity() {
         // EVENTOS DE CLIC (Usamos las variables locales que ya se definieron)
         // --------------------------------------------------------------------
 
+        triviaView.setOnClickListener {
+            val intent = Intent(this, TriviaActivity::class.java)
+            startActivity(intent)
+        }
+
         // Clic para la opción 3: de Respiración (usando BreathingActivity)
         respiracionView.setOnClickListener {
             val intent = Intent(this, BreathingActivity::class.java)
@@ -107,6 +113,9 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, PausasActivasActivity::class.java)
             startActivity(intent)
         }
+
+
+
     }
 
     /**
