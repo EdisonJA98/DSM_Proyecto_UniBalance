@@ -33,11 +33,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Título -->
+
+    <!-- Subtítulo -->
+
     <TextView
         android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_width="214dp"
+        android:layout_height="77dp"
+        android:layout_marginTop="28dp"
         android:background="@drawable/bg_title_rounded"
         android:paddingHorizontal="32dp"
         android:paddingVertical="12dp"
@@ -46,10 +49,10 @@
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Subtítulo -->
     <TextView
         android:id="@+id/tvSubtitle"
         android:layout_width="wrap_content"
