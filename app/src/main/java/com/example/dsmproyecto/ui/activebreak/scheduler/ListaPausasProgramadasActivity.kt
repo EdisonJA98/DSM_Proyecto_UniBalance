@@ -6,30 +6,38 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.dsmproyecto.R
 
 class ListaPausasProgramadasActivity : AppCompatActivity() {
 
-    private lateinit var containerItems: LinearLayout
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: PausasProgramadasAdapter
     private lateinit var layoutEmptyState: LinearLayout
-    private lateinit var scrollContainer: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lista_pausas_programadas)
 
-        containerItems = findViewById(R.id.ll_lista_items)
+        // Referencias UI
+        recyclerView = findViewById(R.id.rv_pausas_programadas)
         layoutEmptyState = findViewById(R.id.layout_empty_state)
-        scrollContainer = findViewById(R.id.scroll_container)
 
+        // 1. Configurar RecyclerView
+        recyclerView.layoutManager = LinearLayoutManager(this) // Lista vertical estándar
+
+        // Inicializar Adapter vacío al principio
+        adapter = PausasProgramadasAdapter(emptyList()) { alarma ->
+            eliminarAlarma(alarma)
+        }
+        recyclerView.adapter = adapter
+
+        // 2. Botones
         findViewById<View>(R.id.btn_back).setOnClickListener { finish() }
 
         findViewById<View>(R.id.fab_add).setOnClickListener {
@@ -40,61 +48,38 @@ class ListaPausasProgramadasActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Recargar la lista cada vez que volvemos a esta pantalla
-        renderizarLista()
+        // Cargar datos cada vez que la pantalla se muestra
+        cargarDatos()
     }
 
-    private fun renderizarLista() {
-        containerItems.removeAllViews()
+    private fun cargarDatos() {
+        // Obtenemos la lista real guardada
+        val listaReal = PausasStorage.obtenerPausas(this)
 
-        // 💡 CARGAR DATOS REALES
-        val listaAlarmas = PausasStorage.obtenerPausas(this)
+        // Actualizamos el adaptador
+        adapter.updateData(listaReal)
 
-        if (listaAlarmas.isEmpty()) {
+        // Manejo de visibilidad (Lista vs Estado Vacío)
+        if (listaReal.isEmpty()) {
             layoutEmptyState.visibility = View.VISIBLE
-            scrollContainer.visibility = View.GONE
+            recyclerView.visibility = View.GONE
         } else {
             layoutEmptyState.visibility = View.GONE
-            scrollContainer.visibility = View.VISIBLE
-
-            for (alarma in listaAlarmas) {
-                agregarItemAlarma(alarma)
-            }
+            recyclerView.visibility = View.VISIBLE
         }
     }
 
-    private fun agregarItemAlarma(alarma: AlarmaPausa) {
-        val inflater = LayoutInflater.from(this)
-        val itemView = inflater.inflate(R.layout.item_pausa_programada, containerItems, false)
+    private fun eliminarAlarma(alarma: AlarmaPausa) {
+        // 1. Cancelar la alarma del sistema Android
+        cancelarAlarmaDelSistema(alarma.id)
 
-        val tvHora = itemView.findViewById<TextView>(R.id.tv_hora_programada)
-        val tvTipo = itemView.findViewById<TextView>(R.id.tv_tipo_pausa)
-        val ivIcono = itemView.findViewById<ImageView>(R.id.iv_pausa_icon)
-        val btnDelete = itemView.findViewById<ImageButton>(R.id.btn_delete)
+        // 2. Eliminar de la base de datos local (SharedPreferences)
+        PausasStorage.eliminarPausa(this, alarma.id)
 
-        // Ocultar botón editar por ahora (implementación futura)
-        itemView.findViewById<ImageButton>(R.id.btn_edit).visibility = View.GONE
+        // 3. Recargar la lista en pantalla
+        cargarDatos()
 
-        // Asignar datos reales
-        tvHora.text = alarma.horaFormato
-        tvTipo.text = alarma.descripcion
-
-        if (alarma.tipo == "VISUAL") {
-            ivIcono.setImageResource(R.drawable.ic_eye)
-        } else if (alarma.tipo == "ESTIRAMIENTO") {
-            ivIcono.setImageResource(R.drawable.ic_stretch)
-        } else {
-            ivIcono.setImageResource(R.drawable.ic_help)
-        }
-
-        btnDelete.setOnClickListener {
-            cancelarAlarmaDelSistema(alarma.id) // Cancelar PendingIntent
-            PausasStorage.eliminarPausa(this, alarma.id) // Borrar de almacenamiento
-            renderizarLista() // Actualizar UI
-            Toast.makeText(this, "Alarma cancelada", Toast.LENGTH_SHORT).show()
-        }
-
-        containerItems.addView(itemView)
+        Toast.makeText(this, "Alarma cancelada", Toast.LENGTH_SHORT).show()
     }
 
     private fun cancelarAlarmaDelSistema(notificationId: Int) {
