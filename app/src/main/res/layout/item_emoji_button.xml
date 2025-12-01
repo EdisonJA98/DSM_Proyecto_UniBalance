@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Usamos CardView como raíz para asegurar la elevación y esquinas redondeadas en todas las versiones
+    y la compatibilidad con las dependencias de tus compañeros.
+-->
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/white"
+
+    android:layout_margin="8dp"
+    tools:targetApi="21">
+
+    <!-- El LinearLayout interno mantiene el contenido centrado y aplica el fondo de selección/no selección -->
+    <LinearLayout
+        android:id="@+id/ll_emoji_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:gravity="center"
+
+        android:background="@drawable/bg_emoji_unselected"
+        >
+
+        <!-- Símbolo del Emoji -->
+        <TextView
+            android:id="@+id/tv_emoji_symbol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="36sp"
+            android:text="😄"
+            android:layout_marginBottom="8dp"
+            tools:text="😄"/>
+
+        <!-- Etiqueta del Emoji -->
+        <TextView
+            android:id="@+id/tv_emoji_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:text="Muy feliz"
+            tools:text="Muy feliz"/>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

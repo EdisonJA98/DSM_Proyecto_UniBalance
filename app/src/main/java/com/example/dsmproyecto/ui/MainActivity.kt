@@ -9,6 +9,7 @@ import android.widget.TextView
 import com.example.dsmproyecto.R
 import com.example.dsmproyecto.ui.activebreak.PausasActivasActivity
 import com.example.dsmproyecto.ui.breathing.BreathingActivity
+import com.example.dsmproyecto.ui.emotions.RegistroEmocionalActivity
 import com.example.dsmproyecto.ui.trivia.TriviaActivity
 
 class MainActivity : AppCompatActivity() {
@@ -114,6 +115,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // 💡 CLIC PARA LA OPCIÓN 5: REGISTRO EMOCIONAL (Usando RegistroEmocionalActivity)
+        emocionalView.setOnClickListener {
+            val intent = Intent(this, RegistroEmocionalActivity::class.java)
+            startActivity(intent)
+        }
 
 
     }

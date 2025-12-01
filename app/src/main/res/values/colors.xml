@@ -21,6 +21,12 @@
     <color name="breathing_yellow">#FFD54F</color>
     <color name="breathing_teal_accent">#4DB6AC</color>
 
+    <!-- Colores UniBalance (adaptados para la Activity de Emociones) -->
+    <color name="color_primary_emotion">#5CC7C2</color>
+    <color name="color_secondary_emotion">#A9E1DE</color>
+    <color name="color_feedback_background">#E0F4F4</color>
+    <color name="color_critical_accent">#E57373</color>
+
     <!-- Pausas activas Colors -->
     <color name="gray_button_background">#E0E0E0</color>
 </resources>
