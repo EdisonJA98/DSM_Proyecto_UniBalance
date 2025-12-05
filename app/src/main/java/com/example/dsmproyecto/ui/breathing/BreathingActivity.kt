@@ -1,26 +1,27 @@
 package com.example.dsmproyecto.ui.breathing
 
-
 import android.os.Bundle
 import android.os.CountDownTimer
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dsmproyecto.R
 import com.example.dsmproyecto.databinding.ActivityBreathingBinding
 import android.widget.ArrayAdapter
+import android.view.View
+import android.widget.AdapterView
 
 class BreathingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityBreathingBinding
     private var isPlaying = false
-    private var currentRound = 1
-    private val maxRounds = 5
-    private var timeLeftInMillis = 60000L // 1 minuto
+    private var timeLeftInMillis = 60000L
+    private var totalTimeInMillis = 60000L
     private var countDownTimer: CountDownTimer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBreathingBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         val adapter = ArrayAdapter.createFromResource(
             this,
             R.array.breathing_values,
@@ -28,50 +29,63 @@ class BreathingActivity : AppCompatActivity() {
         )
         adapter.setDropDownViewResource(R.layout.item_spinner_dropdown)
         binding.spnTime.adapter = adapter
+
         setupUI()
         setupListeners()
     }
 
     private fun setupUI() {
         updateTimerText()
+        binding.progressTimer.progress = 0
     }
 
     private fun setupListeners() {
-        // Botón atrás
-        binding.btnBack.setOnClickListener {
-            finish()
-        }
 
-        // Botón ayuda
-        binding.btnHelp.setOnClickListener {
-            // Mostrar diálogo de ayuda
-            showHelpDialog()
-        }
+        binding.btnBack.setOnClickListener { finish() }
 
-        // Botón play/pause
+        binding.btnHelp.setOnClickListener { showHelpDialog() }
+
         binding.btnPlayPause.setOnClickListener {
-            if (isPlaying) {
-                pauseExercise()
-            } else {
-                startExercise()
+            if (isPlaying) pauseExercise() else startExercise()
+        }
+
+        // Cambiar tiempo desde el spinner
+        binding.spnTime.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val minutes = binding.spnTime.selectedItem.toString().split(" ")[0].toInt()
+
+                timeLeftInMillis = minutes * 60_000L
+                totalTimeInMillis = timeLeftInMillis
+                binding.progressTimer.progress = 0
+
+                updateTimerText()
+
+                if (isPlaying) pauseExercise()
             }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
     }
 
     private fun startExercise() {
-        // Obtener tiempo desde el spinner
-        val selectedTimeText = binding.spnTime.selectedItem.toString()
-        val minutes = selectedTimeText.split(" ")[0].toInt()
+
+        // Leer minutos del spinner
+        val minutes = binding.spnTime.selectedItem.toString().split(" ")[0].toInt()
+
         timeLeftInMillis = minutes * 60_000L
+        totalTimeInMillis = timeLeftInMillis
+        binding.progressTimer.progress = 0
 
         isPlaying = true
         binding.btnPlayPause.setImageResource(R.drawable.ic_pause)
         binding.tvStatus.text = getString(R.string.breathe)
 
-        // Animación
         binding.breathingView.startBreathing()
-
-        // Iniciar timer
         startTimer()
     }
 
@@ -80,10 +94,7 @@ class BreathingActivity : AppCompatActivity() {
         binding.btnPlayPause.setImageResource(R.drawable.ic_play)
         binding.tvStatus.text = getString(R.string.paused)
 
-        // Pausar animación
         binding.breathingView.pauseBreathing()
-
-        // Pausar timer
         countDownTimer?.cancel()
     }
 
@@ -94,36 +105,29 @@ class BreathingActivity : AppCompatActivity() {
             override fun onTick(millisUntilFinished: Long) {
                 timeLeftInMillis = millisUntilFinished
                 updateTimerText()
+
+                val progress =
+                    (((totalTimeInMillis - timeLeftInMillis).toFloat() / totalTimeInMillis) * 100).toInt()
+
+                binding.progressTimer.progress = progress
             }
 
             override fun onFinish() {
                 timeLeftInMillis = 0
                 updateTimerText()
-                completeRound()
+                binding.progressTimer.progress = 100
+
+                finishExercise()
             }
         }.start()
-    }
-
-    private fun completeRound() {
-        if (currentRound < maxRounds) {
-            currentRound++
-            val selectedTimeText = binding.spnTime.selectedItem.toString()
-            val minutes = selectedTimeText.split(" ")[0].toInt()
-            timeLeftInMillis = minutes * 60_000L
-            updateTimerText()
-            startTimer()
-        } else {
-            finishExercise()
-        }
     }
 
     private fun finishExercise() {
         isPlaying = false
         binding.btnPlayPause.setImageResource(R.drawable.ic_play)
         binding.tvStatus.text = getString(R.string.exercise_complete)
-        binding.breathingView.stopBreathing()
 
-        // Mostrar diálogo de completado o navegar a otra pantalla
+        binding.breathingView.stopBreathing()
     }
 
     private fun updateTimerText() {
@@ -133,7 +137,6 @@ class BreathingActivity : AppCompatActivity() {
     }
 
     private fun showHelpDialog() {
-        // Implementar diálogo de ayuda
         androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle(R.string.help)
             .setMessage(R.string.breathing_help_message)
@@ -143,9 +146,7 @@ class BreathingActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        if (isPlaying) {
-            pauseExercise()
-        }
+        if (isPlaying) pauseExercise()
     }
 
     override fun onDestroy() {
