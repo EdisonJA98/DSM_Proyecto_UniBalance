@@ -36,10 +36,14 @@ class BreathingView @JvmOverloads constructor(
 
     private var breathingScale = 1f
     private var baseRadius = 0f
-    private var animator: ValueAnimator? = null
-    private var isAnimating = false
 
+    private var animator: ValueAnimator? = null
     private var breathCycleDuration = 8000L
+
+    // 🔥 Nuevo: mantener estado correcto
+    private var isPaused = false
+    private var isRunning = false
+
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -57,40 +61,57 @@ class BreathingView @JvmOverloads constructor(
         val rInner = baseRadius * breathingScale
 
         canvas.drawCircle(cx, cy, rOuter, outerPaint)
-
+        canvas.drawCircle(cx, cy, rMiddle, middlePaint)
+        canvas.drawCircle(cx, cy, rInner, innerPaint)
     }
 
-    fun startBreathing() {
-        if (isAnimating) return
-        isAnimating = true
 
-        animator = ValueAnimator.ofFloat(1f, 1.25f, 1f).apply {
-            duration = breathCycleDuration
-            repeatCount = ValueAnimator.INFINITE
-            interpolator = AccelerateDecelerateInterpolator()
-            addUpdateListener {
-                breathingScale = it.animatedValue as Float
-                invalidate()
+    // 🚀 INICIAR O REANUDAR
+    fun startBreathing() {
+        when {
+            // REANUDAR
+            isPaused && animator?.isPaused == true -> {
+                animator?.resume()
+                isPaused = false
+                isRunning = true
             }
-            start()
+
+            // INICIAR desde cero
+            !isRunning -> {
+                animator = ValueAnimator.ofFloat(1f, 1.25f, 1f).apply {
+                    duration = breathCycleDuration
+                    repeatCount = ValueAnimator.INFINITE
+                    interpolator = AccelerateDecelerateInterpolator()
+                    addUpdateListener {
+                        breathingScale = it.animatedValue as Float
+                        invalidate()
+                    }
+                    start()
+                }
+                isRunning = true
+            }
         }
     }
 
+    // ⏸ PAUSAR SIN REINICIAR
+    fun pauseBreathing() {
+        if (isRunning && animator?.isRunning == true) {
+            animator?.pause()
+            isPaused = true
+            isRunning = false
+        }
+    }
+
+    // 🛑 DETENER Y REINICIAR COMPLETO (cuando termina el ejercicio)
     fun stopBreathing() {
-        isAnimating = false
         animator?.cancel()
         animator = null
         breathingScale = 1f
+        isPaused = false
+        isRunning = false
         invalidate()
     }
 
-    fun pauseBreathing() {
-        animator?.pause()
-    }
-
-    fun resumeBreathing() {
-        animator?.resume()
-    }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()

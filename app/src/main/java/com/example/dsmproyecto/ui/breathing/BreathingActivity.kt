@@ -8,14 +8,22 @@ import com.example.dsmproyecto.databinding.ActivityBreathingBinding
 import android.widget.ArrayAdapter
 import android.view.View
 import android.widget.AdapterView
+import android.media.MediaPlayer
 
 class BreathingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityBreathingBinding
     private var isPlaying = false
-    private var timeLeftInMillis = 60000L
-    private var totalTimeInMillis = 60000L
+
+    private var timeLeftInMillis = 60_000L
+    private var totalTimeInMillis = 60_000L
     private var countDownTimer: CountDownTimer? = null
+
+    private var mediaPlayer: MediaPlayer? = null
+
+    // 👇 NUEVO
+    private var firstStart = true
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,14 +38,20 @@ class BreathingActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(R.layout.item_spinner_dropdown)
         binding.spnTime.adapter = adapter
 
+        // Inicializar audio una sola vez
+        mediaPlayer = MediaPlayer.create(this, R.raw.breathing)
+        mediaPlayer?.isLooping = true
+
         setupUI()
         setupListeners()
     }
+
 
     private fun setupUI() {
         updateTimerText()
         binding.progressTimer.progress = 0
     }
+
 
     private fun setupListeners() {
 
@@ -49,7 +63,7 @@ class BreathingActivity : AppCompatActivity() {
             if (isPlaying) pauseExercise() else startExercise()
         }
 
-        // Cambiar tiempo desde el spinner
+        // Cambio de tiempo desde spinner
         binding.spnTime.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -58,28 +72,33 @@ class BreathingActivity : AppCompatActivity() {
                 id: Long
             ) {
                 val minutes = binding.spnTime.selectedItem.toString().split(" ")[0].toInt()
+                val millis = minutes * 60_000L
 
-                timeLeftInMillis = minutes * 60_000L
-                totalTimeInMillis = timeLeftInMillis
-                binding.progressTimer.progress = 0
-
-                updateTimerText()
-
-                if (isPlaying) pauseExercise()
+                // Solo actualizar si no está corriendo
+                if (!isPlaying) {
+                    timeLeftInMillis = millis
+                    totalTimeInMillis = millis
+                    binding.progressTimer.progress = 0
+                    updateTimerText()
+                    firstStart = true
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
     }
 
+
     private fun startExercise() {
 
-        // Leer minutos del spinner
-        val minutes = binding.spnTime.selectedItem.toString().split(" ")[0].toInt()
-
-        timeLeftInMillis = minutes * 60_000L
-        totalTimeInMillis = timeLeftInMillis
-        binding.progressTimer.progress = 0
+        // 👇 SOLO la primera vez se define el tiempo total
+        if (firstStart) {
+            val minutes = binding.spnTime.selectedItem.toString().split(" ")[0].toInt()
+            totalTimeInMillis = minutes * 60_000L
+            timeLeftInMillis = totalTimeInMillis
+            binding.progressTimer.progress = 0
+            firstStart = false
+        }
 
         isPlaying = true
         binding.btnPlayPause.setImageResource(R.drawable.ic_pause)
@@ -87,7 +106,11 @@ class BreathingActivity : AppCompatActivity() {
 
         binding.breathingView.startBreathing()
         startTimer()
+
+        // Reanudar audio donde quedó
+        mediaPlayer?.start()
     }
+
 
     private fun pauseExercise() {
         isPlaying = false
@@ -96,7 +119,10 @@ class BreathingActivity : AppCompatActivity() {
 
         binding.breathingView.pauseBreathing()
         countDownTimer?.cancel()
+
+        mediaPlayer?.pause()
     }
+
 
     private fun startTimer() {
         countDownTimer?.cancel()
@@ -116,11 +142,11 @@ class BreathingActivity : AppCompatActivity() {
                 timeLeftInMillis = 0
                 updateTimerText()
                 binding.progressTimer.progress = 100
-
                 finishExercise()
             }
         }.start()
     }
+
 
     private fun finishExercise() {
         isPlaying = false
@@ -128,13 +154,21 @@ class BreathingActivity : AppCompatActivity() {
         binding.tvStatus.text = getString(R.string.exercise_complete)
 
         binding.breathingView.stopBreathing()
+
+        mediaPlayer?.pause()
+        mediaPlayer?.seekTo(0)
+
+        // Reset para nuevo ejercicio
+        firstStart = true
     }
+
 
     private fun updateTimerText() {
         val minutes = (timeLeftInMillis / 1000) / 60
         val seconds = (timeLeftInMillis / 1000) % 60
         binding.tvTimer.text = String.format("%d:%02d", minutes, seconds)
     }
+
 
     private fun showHelpDialog() {
         androidx.appcompat.app.AlertDialog.Builder(this)
@@ -144,14 +178,19 @@ class BreathingActivity : AppCompatActivity() {
             .show()
     }
 
+
     override fun onPause() {
         super.onPause()
         if (isPlaying) pauseExercise()
     }
 
+
     override fun onDestroy() {
         super.onDestroy()
         countDownTimer?.cancel()
         binding.breathingView.stopBreathing()
+
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 }
