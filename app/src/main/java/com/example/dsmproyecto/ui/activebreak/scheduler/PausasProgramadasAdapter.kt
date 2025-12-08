@@ -46,14 +46,14 @@ class PausasProgramadasAdapter(
     // Crea el diseño de la fila (infla el XML)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PausaViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(
-            R.layout.item_pausa_programada, // Usamos tu layout de item existente
+            R.layout.item_pausa_programada, // Usamos el layout de item existente
             parent,
             false
         )
         return PausaViewHolder(view)
     }
 
-    // Conecta los datos con el ViewHolder
+    // Conectamos los datos con el ViewHolder
     override fun onBindViewHolder(holder: PausaViewHolder, position: Int) {
         holder.bind(listaAlarmas[position])
     }

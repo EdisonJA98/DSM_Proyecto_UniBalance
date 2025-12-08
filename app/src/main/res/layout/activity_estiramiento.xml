@@ -52,7 +52,7 @@
         android:id="@+id/tv_title_ejercicio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="75dp"
         android:paddingStart="32dp"
         android:paddingEnd="32dp"
         android:text="Flexion lateral de torso"

@@ -63,7 +63,7 @@
             android:textColor="@color/gray_subtitle"/>
     </LinearLayout>
 
-    <!-- 💡 CAMBIO: Usamos RecyclerView en lugar de ScrollView -->
+    <!-- CAMBIO: Usamos RecyclerView en lugar de ScrollView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_pausas_programadas"
         android:layout_width="match_parent"
