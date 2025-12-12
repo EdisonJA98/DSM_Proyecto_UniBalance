@@ -31,7 +31,7 @@ class BreathingView @JvmOverloads constructor(
     private var baseRadius = 0f
 
     private var animator: ValueAnimator? = null
-    private var breathCycleDuration = 8000L
+    private var breathCycleDuration = 8200L
 
     private var isPaused = false
     private var isRunning = false
@@ -49,7 +49,6 @@ class BreathingView @JvmOverloads constructor(
         val cy = height / 2f
 
         val rOuter = baseRadius * 1.45f * breathingScale
-        val rMiddle = baseRadius * 1.20f * breathingScale
         val rInner = baseRadius * breathingScale
 
         canvas.drawCircle(cx, cy, rOuter, outerPaint)

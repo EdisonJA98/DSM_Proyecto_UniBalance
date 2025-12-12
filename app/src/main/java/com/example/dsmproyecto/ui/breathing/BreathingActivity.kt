@@ -2,6 +2,7 @@ package com.example.dsmproyecto.ui.breathing
 
 import android.os.Bundle
 import android.os.CountDownTimer
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dsmproyecto.R
 import com.example.dsmproyecto.databinding.ActivityBreathingBinding
@@ -37,12 +38,29 @@ class BreathingActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(R.layout.item_spinner_dropdown)
         binding.spnTime.adapter = adapter
 
-        // Inicializar audio una sola vez
         mediaPlayer = MediaPlayer.create(this, R.raw.breathing)
         mediaPlayer?.isLooping = true
 
         setupUI()
         setupListeners()
+        setupBackPressInterceptor()
+    }
+
+
+    // Diálogo de salida
+    private fun setupBackPressInterceptor() {
+        onBackPressedDispatcher.addCallback(this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    showExitDialog()
+                }
+            })
+    }
+
+    private fun showExitDialog() {
+        val dialog = ConfirmExitBreathingDialog()
+        dialog.isCancelable = false
+        dialog.show(supportFragmentManager, "exit_breathing")
     }
 
 
@@ -54,7 +72,9 @@ class BreathingActivity : AppCompatActivity() {
 
     private fun setupListeners() {
 
-        binding.btnBack.setOnClickListener { finish() }
+        binding.btnBack.setOnClickListener {
+            showExitDialog()
+        }
 
         binding.btnHelp.setOnClickListener { showHelpDialog() }
 
@@ -62,7 +82,6 @@ class BreathingActivity : AppCompatActivity() {
             if (isPlaying) pauseExercise() else startExercise()
         }
 
-        // Cambio de tiempo desde spinner
         binding.spnTime.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -73,7 +92,6 @@ class BreathingActivity : AppCompatActivity() {
                 val minutes = binding.spnTime.selectedItem.toString().split(" ")[0].toInt()
                 val millis = minutes * 60_000L
 
-                // Solo actualizar si no está corriendo
                 if (!isPlaying) {
                     timeLeftInMillis = millis
                     totalTimeInMillis = millis
@@ -90,7 +108,6 @@ class BreathingActivity : AppCompatActivity() {
 
     private fun startExercise() {
 
-        // La primera vez se define el tiempo total
         if (firstStart) {
             val minutes = binding.spnTime.selectedItem.toString().split(" ")[0].toInt()
             totalTimeInMillis = minutes * 60_000L
@@ -106,7 +123,6 @@ class BreathingActivity : AppCompatActivity() {
         binding.breathingView.startBreathing()
         startTimer()
 
-        // Reanudar audio donde quedó
         mediaPlayer?.start()
     }
 
@@ -118,7 +134,6 @@ class BreathingActivity : AppCompatActivity() {
 
         binding.breathingView.pauseBreathing()
         countDownTimer?.cancel()
-
         mediaPlayer?.pause()
     }
 
@@ -157,7 +172,6 @@ class BreathingActivity : AppCompatActivity() {
         mediaPlayer?.pause()
         mediaPlayer?.seekTo(0)
 
-        // Reset para nuevo ejercicio
         firstStart = true
     }
 
