@@ -1,6 +1,5 @@
 package com.example.dsmproyecto.ui.activebreak.scheduler
 
-import android.Manifest
 import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -66,8 +65,19 @@ class ProgramarPausaCompletaActivity : AppCompatActivity() {
 
     private fun setupSpinner() {
         val opciones = listOf("Ejercicios de estiramiento", "Descanso visual", "Decidir después")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, opciones)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        // 1. Vista "Cerrada" (Usa el archivo anterior, fondo transparente/heredado)
+        // Esto mantiene el diseño turquesa de tu pantalla principal
+        val adapter = ArrayAdapter(
+            this,
+            R.layout.pa_progpausa_tpa_spinnerselected_item,
+            opciones
+        )
+
+        // 2. Vista "Desplegada" (Usa el NUEVO archivo, fondo blanco forzado)
+        // Esto arregla el menú oscuro en el Samsung A15
+        adapter.setDropDownViewResource(R.layout.pa_progpausa_tpa_spinnerdropdown_item)
+
         spinnerPausas.adapter = adapter
     }
 
