@@ -15,18 +15,11 @@ class BreathingView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
     private val outerCircleColor = Color.parseColor("#80CBC4")
-    private val middleCircleColor = Color.parseColor("#FF8A65")
     private val innerCircleColor = Color.parseColor("#00897B")
 
     private val outerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = outerCircleColor
         style = Paint.Style.FILL
-    }
-
-    private val middlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = middleCircleColor
-        style = Paint.Style.STROKE
-        strokeWidth = 22f
     }
 
     private val innerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -40,7 +33,6 @@ class BreathingView @JvmOverloads constructor(
     private var animator: ValueAnimator? = null
     private var breathCycleDuration = 8000L
 
-    // 🔥 Nuevo: mantener estado correcto
     private var isPaused = false
     private var isRunning = false
 
@@ -61,22 +53,21 @@ class BreathingView @JvmOverloads constructor(
         val rInner = baseRadius * breathingScale
 
         canvas.drawCircle(cx, cy, rOuter, outerPaint)
-        canvas.drawCircle(cx, cy, rMiddle, middlePaint)
         canvas.drawCircle(cx, cy, rInner, innerPaint)
     }
 
 
-    // 🚀 INICIAR O REANUDAR
+    // Iniciar o reanudar
     fun startBreathing() {
         when {
-            // REANUDAR
+            // Reanudar
             isPaused && animator?.isPaused == true -> {
                 animator?.resume()
                 isPaused = false
                 isRunning = true
             }
 
-            // INICIAR desde cero
+            // Iniciar desde cero
             !isRunning -> {
                 animator = ValueAnimator.ofFloat(1f, 1.25f, 1f).apply {
                     duration = breathCycleDuration
@@ -93,7 +84,7 @@ class BreathingView @JvmOverloads constructor(
         }
     }
 
-    // ⏸ PAUSAR SIN REINICIAR
+    // Pausar sin reiniciar
     fun pauseBreathing() {
         if (isRunning && animator?.isRunning == true) {
             animator?.pause()
@@ -102,7 +93,7 @@ class BreathingView @JvmOverloads constructor(
         }
     }
 
-    // 🛑 DETENER Y REINICIAR COMPLETO (cuando termina el ejercicio)
+    // Detener y reiniciar (cuando termina el ejercicio)
     fun stopBreathing() {
         animator?.cancel()
         animator = null

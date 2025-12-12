@@ -21,7 +21,6 @@ class BreathingActivity : AppCompatActivity() {
 
     private var mediaPlayer: MediaPlayer? = null
 
-    // 👇 NUEVO
     private var firstStart = true
 
 
@@ -91,7 +90,7 @@ class BreathingActivity : AppCompatActivity() {
 
     private fun startExercise() {
 
-        // 👇 SOLO la primera vez se define el tiempo total
+        // La primera vez se define el tiempo total
         if (firstStart) {
             val minutes = binding.spnTime.selectedItem.toString().split(" ")[0].toInt()
             totalTimeInMillis = minutes * 60_000L
