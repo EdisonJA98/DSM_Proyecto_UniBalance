@@ -29,22 +29,6 @@
         <activity android:name=".ui.activebreak.scheduler.ListaPausasProgramadasActivity" />
 
         <activity
-            android:name=".ui.activebreak.scheduler.ProgramarTipoPausaActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-
-        <activity
-            android:name=".ui.activebreak.scheduler.ProgramarTiempoActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-
-        <activity
             android:name=".ui.activebreak.stretchingexercises.EstiramientoActivity"
             android:exported="false">
             <meta-data

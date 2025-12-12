@@ -47,7 +47,8 @@
             android:text="Titulo de la Opcion"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:gravity="center_horizontal"/>
 
         <TextView
             android:id="@+id/tv_option_description"

@@ -81,6 +81,7 @@
         android:hint="Ej. 45"
         android:textSize="18sp"
         android:textColor="@color/black"
+        android:textColorHint="@color/gray_subtitle"
         app:layout_constraintTop_toBottomOf="@+id/lbl_tiempo" />
 
     <TextView
