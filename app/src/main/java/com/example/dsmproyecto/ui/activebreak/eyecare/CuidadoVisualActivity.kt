@@ -6,10 +6,10 @@ import android.animation.Keyframe
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.animation.ValueAnimator
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -17,14 +17,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dsmproyecto.R
-import com.example.dsmproyecto.ui.activebreak.scheduler.PausasStorage // Importar el Storage
+// Asegúrate de importar tus diálogos si están en el mismo paquete
 
 class CuidadoVisualActivity : AppCompatActivity() {
 
-    // TIEMPO TOTAL: 65 segundos (32s Horizontal + 32s Vertical + buffer)
-    private val TOTAL_TIME_MS: Long = 65000
-    // Cambio a la mitad (32s aprox)
-    private val SWITCH_TIME_MS: Long = 32000
+    private val TOTAL_TIME_MS: Long = 40500
+    private val SWITCH_TIME_MS: Long = 20000
 
     private var timeLeftMS: Long = TOTAL_TIME_MS
     private lateinit var countDownTimer: CountDownTimer
@@ -36,19 +34,12 @@ class CuidadoVisualActivity : AppCompatActivity() {
     private var currentAnimator: ObjectAnimator? = null
     private var currentPhase = 1
 
+    // 💡 NUEVO: MediaPlayer para los audios explicativos
+    private var mediaPlayer: MediaPlayer? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cuidado_visual)
-
-        // 💡 LÓGICA DE ELIMINACIÓN AUTOMÁTICA
-        // Verificamos si venimos de una notificación
-        val notificationId = intent.getIntExtra("NOTIFICATION_ID_TO_DELETE", 0)
-        if (notificationId != 0) {
-            // Si hay un ID válido, borramos esta pausa de la lista de programadas
-            PausasStorage.eliminarPausa(this, notificationId)
-            // Opcional: Mostrar un pequeño mensaje o log
-            // Toast.makeText(this, "Pausa iniciada desde notificación", Toast.LENGTH_SHORT).show()
-        }
 
         ivPupila = findViewById(R.id.iv_pupila_movil)
 
@@ -65,6 +56,12 @@ class CuidadoVisualActivity : AppCompatActivity() {
         setupTimerControls()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        // Liberar recursos de audio al salir
+        releaseMediaPlayer()
+    }
+
     override fun onBackPressed() {
         showExitConfirmationDialog()
     }
@@ -78,23 +75,63 @@ class CuidadoVisualActivity : AppCompatActivity() {
     }
 
     /**
-     * Inicia la animación con velocidad constante usando Keyframes.
-     * Ciclo: Centro -> Extremo A (3s) -> Pausa (2s) -> Extremo B (6s) -> Pausa (2s) -> Centro (3s)
-     * Total Ciclo: 16 segundos.
+     * Reproduce el audio correspondiente a la fase.
      */
+    private fun playAudioForPhase(phase: Int) {
+        // Liberar cualquier audio previo
+        releaseMediaPlayer()
+
+        // Seleccionar el archivo según la fase
+        val resId = if (phase == 1) {
+            R.raw.pa_visual_part1_movhorizontal
+        } else {
+            R.raw.pa_visual_part2_movvertical
+        }
+
+        try {
+            mediaPlayer = MediaPlayer.create(this, resId)
+            mediaPlayer?.setOnCompletionListener {
+                // Cuando termina, no hace nada (no se repite, "solo una vez")
+            }
+            mediaPlayer?.start()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun releaseMediaPlayer() {
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
+
     private fun startEyeAnimation(phase: Int) {
+        // Lógica de RESUMIR (Animación y Audio)
         if (currentAnimator != null && currentAnimator!!.isPaused && currentPhase == phase) {
             currentAnimator?.resume()
+
+            // Reanudar audio solo si no ha terminado
+            if (mediaPlayer != null && !mediaPlayer!!.isPlaying) {
+                // Verificar que no haya llegado al final para no repetirlo
+                if (mediaPlayer!!.currentPosition < mediaPlayer!!.duration) {
+                    mediaPlayer?.start()
+                }
+            }
             return
         }
+
+        // Lógica de INICIO NUEVO
         currentAnimator?.cancel()
+
+        // 💡 Reproducir el audio correspondiente a la nueva fase
+        playAudioForPhase(phase)
 
         val range = 50f
         val propertyName = if (phase == 1) "translationX" else "translationY"
 
-        // Aseguramos la otra propiedad en 0
         if (phase == 1) ivPupila.translationY = 0f else ivPupila.translationX = 0f
 
+        // Configuración de animación suave con Keyframes (Ciclo de 16s aprox)
         val kf0 = Keyframe.ofFloat(0f, 0f)
         val kf1 = Keyframe.ofFloat(0.1875f, -range)
         val kf2 = Keyframe.ofFloat(0.3125f, -range)
@@ -105,7 +142,7 @@ class CuidadoVisualActivity : AppCompatActivity() {
         val pvh = PropertyValuesHolder.ofKeyframe(propertyName, kf0, kf1, kf2, kf3, kf4, kf5)
 
         currentAnimator = ObjectAnimator.ofPropertyValuesHolder(ivPupila, pvh).apply {
-            duration = 16000 // 16 segundos por ciclo completo
+            duration = 16000
             repeatCount = ValueAnimator.INFINITE
             interpolator = LinearInterpolator()
             start()
@@ -118,10 +155,19 @@ class CuidadoVisualActivity : AppCompatActivity() {
         currentAnimator = null
         ivPupila.translationX = 0f
         ivPupila.translationY = 0f
+
+        // Detener audio
+        if (mediaPlayer?.isPlaying == true) {
+            mediaPlayer?.stop()
+        }
     }
 
     private fun pauseEyeAnimation() {
         currentAnimator?.pause()
+        // Pausar audio si está sonando
+        if (mediaPlayer?.isPlaying == true) {
+            mediaPlayer?.pause()
+        }
     }
 
     private fun startTimer() {
@@ -131,9 +177,9 @@ class CuidadoVisualActivity : AppCompatActivity() {
                 timeLeftMS = millisUntilFinished
                 updateTimerText()
 
-                // Cambio a la fase Vertical cuando quedan 32 segundos (aprox mitad)
+                // CAMBIO DE FASE a los 20 segundos
                 if (millisUntilFinished <= SWITCH_TIME_MS && currentPhase == 1) {
-                    startEyeAnimation(2)
+                    startEyeAnimation(2) // Esto iniciará el segundo audio
                 }
             }
 
@@ -141,8 +187,11 @@ class CuidadoVisualActivity : AppCompatActivity() {
                 timeLeftMS = 0
                 updateTimerText()
                 isTimerRunning = false
+
                 stopEyeAnimation()
+                releaseMediaPlayer() // Limpieza final
                 btnPausePlay.setImageResource(R.drawable.ic_play)
+
                 Toast.makeText(this@CuidadoVisualActivity, "Rutina finalizada", Toast.LENGTH_LONG).show()
                 currentPhase = 1
             }
@@ -151,10 +200,11 @@ class CuidadoVisualActivity : AppCompatActivity() {
         isTimerRunning = true
         btnPausePlay.setImageResource(R.drawable.ic_pause)
 
+        // Iniciar la animación y audio correspondiente
         if (timeLeftMS > SWITCH_TIME_MS) {
-            startEyeAnimation(1)
+            startEyeAnimation(1) // Audio Horizontal
         } else {
-            startEyeAnimation(2)
+            startEyeAnimation(2) // Audio Vertical
         }
     }
 
@@ -189,6 +239,7 @@ class CuidadoVisualActivity : AppCompatActivity() {
                     updateTimerText()
                     currentPhase = 1
                     stopEyeAnimation()
+                    releaseMediaPlayer() // Asegurar que el audio se reinicie
                 }
                 startTimer()
             }
@@ -197,9 +248,12 @@ class CuidadoVisualActivity : AppCompatActivity() {
         btnRestart.setOnClickListener {
             pauseTimer()
             stopEyeAnimation()
+            releaseMediaPlayer() // Reiniciar audios
+
             timeLeftMS = TOTAL_TIME_MS
             updateTimerText()
             currentPhase = 1
+
             btnPausePlay.setImageResource(R.drawable.ic_play)
         }
     }

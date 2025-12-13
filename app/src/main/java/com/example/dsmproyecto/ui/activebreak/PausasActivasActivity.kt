@@ -79,7 +79,7 @@ class PausasActivasActivity : AppCompatActivity() {
     private fun setupBottomButtons() {
         // Botón 1: Programar Nueva (Lleva a la pantalla unificada)
         findViewById<View>(R.id.btn_programar_nueva).setOnClickListener {
-            // 💡 CAMBIO CLAVE: Redirige a ProgramarPausaCompletaActivity
+            // Redirige a ProgramarPausaCompletaActivity
             val intent = Intent(this, ProgramarPausaCompletaActivity::class.java)
             startActivity(intent)
         }
