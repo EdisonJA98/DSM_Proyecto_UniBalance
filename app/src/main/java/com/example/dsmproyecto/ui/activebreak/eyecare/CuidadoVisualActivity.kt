@@ -34,7 +34,6 @@ class CuidadoVisualActivity : AppCompatActivity() {
     private var currentAnimator: ObjectAnimator? = null
     private var currentPhase = 1
 
-    // 💡 NUEVO: MediaPlayer para los audios explicativos
     private var mediaPlayer: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +57,6 @@ class CuidadoVisualActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // Liberar recursos de audio al salir
         releaseMediaPlayer()
     }
 
@@ -75,23 +73,16 @@ class CuidadoVisualActivity : AppCompatActivity() {
     }
 
     /**
-     * Reproduce el audio correspondiente a la fase.
+     * Función genérica para reproducir cualquier recurso de audio en res/raw.
      */
-    private fun playAudioForPhase(phase: Int) {
-        // Liberar cualquier audio previo
+    private fun playAudioResource(resId: Int) {
+        // Liberar audio anterior si existe
         releaseMediaPlayer()
-
-        // Seleccionar el archivo según la fase
-        val resId = if (phase == 1) {
-            R.raw.pa_visual_part1_movhorizontal
-        } else {
-            R.raw.pa_visual_part2_movvertical
-        }
 
         try {
             mediaPlayer = MediaPlayer.create(this, resId)
             mediaPlayer?.setOnCompletionListener {
-                // Cuando termina, no hace nada (no se repite, "solo una vez")
+                // Opcional: lógica al terminar audio
             }
             mediaPlayer?.start()
         } catch (e: Exception) {
@@ -100,9 +91,15 @@ class CuidadoVisualActivity : AppCompatActivity() {
     }
 
     private fun releaseMediaPlayer() {
-        mediaPlayer?.stop()
-        mediaPlayer?.release()
-        mediaPlayer = null
+        try {
+            if (mediaPlayer?.isPlaying == true) {
+                mediaPlayer?.stop()
+            }
+            mediaPlayer?.release()
+            mediaPlayer = null
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun startEyeAnimation(phase: Int) {
@@ -112,10 +109,12 @@ class CuidadoVisualActivity : AppCompatActivity() {
 
             // Reanudar audio solo si no ha terminado
             if (mediaPlayer != null && !mediaPlayer!!.isPlaying) {
-                // Verificar que no haya llegado al final para no repetirlo
-                if (mediaPlayer!!.currentPosition < mediaPlayer!!.duration) {
-                    mediaPlayer?.start()
-                }
+                // Verificar posición para evitar errores
+                try {
+                    if (mediaPlayer!!.currentPosition < mediaPlayer!!.duration) {
+                        mediaPlayer?.start()
+                    }
+                } catch (e: Exception) { e.printStackTrace() }
             }
             return
         }
@@ -123,15 +122,15 @@ class CuidadoVisualActivity : AppCompatActivity() {
         // Lógica de INICIO NUEVO
         currentAnimator?.cancel()
 
-        // 💡 Reproducir el audio correspondiente a la nueva fase
-        playAudioForPhase(phase)
+        // Reproducir audio de instrucción según fase
+        val audioResId = if (phase == 1) R.raw.pa_visual_part1_movhorizontal else R.raw.pa_visual_part2_movvertical
+        playAudioResource(audioResId)
 
         val range = 50f
         val propertyName = if (phase == 1) "translationX" else "translationY"
 
         if (phase == 1) ivPupila.translationY = 0f else ivPupila.translationX = 0f
 
-        // Configuración de animación suave con Keyframes (Ciclo de 16s aprox)
         val kf0 = Keyframe.ofFloat(0f, 0f)
         val kf1 = Keyframe.ofFloat(0.1875f, -range)
         val kf2 = Keyframe.ofFloat(0.3125f, -range)
@@ -156,7 +155,7 @@ class CuidadoVisualActivity : AppCompatActivity() {
         ivPupila.translationX = 0f
         ivPupila.translationY = 0f
 
-        // Detener audio
+        // Detener audio de instrucción si está sonando
         if (mediaPlayer?.isPlaying == true) {
             mediaPlayer?.stop()
         }
@@ -164,7 +163,6 @@ class CuidadoVisualActivity : AppCompatActivity() {
 
     private fun pauseEyeAnimation() {
         currentAnimator?.pause()
-        // Pausar audio si está sonando
         if (mediaPlayer?.isPlaying == true) {
             mediaPlayer?.pause()
         }
@@ -179,7 +177,7 @@ class CuidadoVisualActivity : AppCompatActivity() {
 
                 // CAMBIO DE FASE a los 20 segundos
                 if (millisUntilFinished <= SWITCH_TIME_MS && currentPhase == 1) {
-                    startEyeAnimation(2) // Esto iniciará el segundo audio
+                    startEyeAnimation(2) // Esto iniciará el segundo audio de instrucción
                 }
             }
 
@@ -188,8 +186,12 @@ class CuidadoVisualActivity : AppCompatActivity() {
                 updateTimerText()
                 isTimerRunning = false
 
+                // Detenemos la animación y el audio de instrucción actual
                 stopEyeAnimation()
-                releaseMediaPlayer() // Limpieza final
+
+                // 💡 REPRODUCIR AUDIO FINALIZACIÓN
+                playAudioResource(R.raw.pa_visual_finalizacion)
+
                 btnPausePlay.setImageResource(R.drawable.ic_play)
 
                 Toast.makeText(this@CuidadoVisualActivity, "Rutina finalizada", Toast.LENGTH_LONG).show()
@@ -202,9 +204,9 @@ class CuidadoVisualActivity : AppCompatActivity() {
 
         // Iniciar la animación y audio correspondiente
         if (timeLeftMS > SWITCH_TIME_MS) {
-            startEyeAnimation(1) // Audio Horizontal
+            startEyeAnimation(1)
         } else {
-            startEyeAnimation(2) // Audio Vertical
+            startEyeAnimation(2)
         }
     }
 
@@ -239,7 +241,7 @@ class CuidadoVisualActivity : AppCompatActivity() {
                     updateTimerText()
                     currentPhase = 1
                     stopEyeAnimation()
-                    releaseMediaPlayer() // Asegurar que el audio se reinicie
+                    releaseMediaPlayer()
                 }
                 startTimer()
             }
@@ -248,7 +250,7 @@ class CuidadoVisualActivity : AppCompatActivity() {
         btnRestart.setOnClickListener {
             pauseTimer()
             stopEyeAnimation()
-            releaseMediaPlayer() // Reiniciar audios
+            releaseMediaPlayer()
 
             timeLeftMS = TOTAL_TIME_MS
             updateTimerText()

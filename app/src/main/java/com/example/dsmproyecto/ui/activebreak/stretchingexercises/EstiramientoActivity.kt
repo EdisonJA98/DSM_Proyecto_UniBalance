@@ -1,5 +1,6 @@
 package com.example.dsmproyecto.ui.activebreak.stretchingexercises
 
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
@@ -9,7 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dsmproyecto.R
-import com.example.dsmproyecto.ui.activebreak.scheduler.PausasStorage // Importar el Storage
+import com.example.dsmproyecto.ui.activebreak.scheduler.PausasStorage
 
 class EstiramientoActivity : AppCompatActivity() {
 
@@ -28,11 +29,14 @@ class EstiramientoActivity : AppCompatActivity() {
 
     private var currentStep: Int = 1
 
+    // 🔊 Variable para el reproductor de audio
+    private var mediaPlayer: MediaPlayer? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_estiramiento)
 
-        // 💡 LÓGICA DE ELIMINACIÓN AUTOMÁTICA
+        // Lógica de eliminación de notificación
         val notificationId = intent.getIntExtra("NOTIFICATION_ID_TO_DELETE", 0)
         if (notificationId != 0) {
             PausasStorage.eliminarPausa(this, notificationId)
@@ -43,23 +47,25 @@ class EstiramientoActivity : AppCompatActivity() {
         ivPasoDerecho = findViewById(R.id.iv_paso_derecho)
         tvInstruccion = findViewById(R.id.tv_instruccion)
 
-        // 1. Configurar el botón de retroceso (Back Button)
         findViewById<View>(R.id.btn_back).setOnClickListener {
             showExitConfirmationDialog()
         }
 
-        // 2. Configurar el botón de Ayuda
         findViewById<View>(R.id.btn_help).setOnClickListener {
             val dialog = AyudaEstiramientoDialog()
             dialog.show(supportFragmentManager, "AyudaEstiramiento")
         }
 
-        // 3. Configurar Temporizador y Controles iniciales
         updateTimerText()
         setupTimerControls()
 
-        // Mensaje inicial
         tvInstruccion.text = "Pulsa play para comenzar"
+    }
+
+    // 💡 IMPORTANTE: Liberar recursos al salir
+    override fun onDestroy() {
+        super.onDestroy()
+        releaseMediaPlayer()
     }
 
     override fun onBackPressed() {
@@ -74,14 +80,51 @@ class EstiramientoActivity : AppCompatActivity() {
         dialog.show(supportFragmentManager, "ConfirmExitEstiramiento")
     }
 
+    // ==========================================
+    // 🔊 FUNCIONES DE AUDIO
+    // ==========================================
+
+    /**
+     * Función genérica para reproducir cualquier archivo de audio de res/raw.
+     * Útil para inicio, cambios de fase o finalización.
+     */
+    private fun playAudioResource(resId: Int) {
+        // Liberamos cualquier audio previo para evitar superposiciones
+        releaseMediaPlayer()
+
+        try {
+            mediaPlayer = MediaPlayer.create(this, resId)
+            mediaPlayer?.setOnCompletionListener {
+                // Opcional: Lógica cuando termina el audio
+            }
+            mediaPlayer?.start()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun releaseMediaPlayer() {
+        try {
+            if (mediaPlayer?.isPlaying == true) {
+                mediaPlayer?.stop()
+            }
+            mediaPlayer?.release()
+            mediaPlayer = null
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    // ==========================================
+    // LÓGICA DE EJERCICIO
+    // ==========================================
+
     private fun switchStep(step: Int) {
         currentStep = step
         if (step == 1) {
-            // Paso 1 Activo (Izquierda)
             ivPasoIzquierdo.setBackgroundResource(R.drawable.bg_paso_activo)
             ivPasoDerecho.setBackgroundResource(R.drawable.bg_paso_inactivo)
         } else if (step == 2) {
-            // Paso 2 Activo (Derecha)
             ivPasoIzquierdo.setBackgroundResource(R.drawable.bg_paso_inactivo)
             ivPasoDerecho.setBackgroundResource(R.drawable.bg_paso_activo)
         }
@@ -110,9 +153,10 @@ class EstiramientoActivity : AppCompatActivity() {
                 timeLeftMS = millisUntilFinished
                 updateTimerText()
 
-                // Lógica de cambio de paso: Si quedan 10s o menos, pasamos al paso 2
                 if (millisUntilFinished <= SWITCH_TIME_MS && currentStep == 1) {
                     switchStep(2)
+                    // 💡 Aquí podrías agregar un sonido de cambio de fase si quisieras:
+                    // playAudioResource(R.raw.tu_sonido_cambio)
                 }
 
                 updateInstructionWithTime()
@@ -125,6 +169,10 @@ class EstiramientoActivity : AppCompatActivity() {
                 btnPausePlay.setImageResource(R.drawable.ic_play)
 
                 tvInstruccion.text = "Rutina finalizada. ¡Bien hecho!"
+
+                // 💡 REPRODUCCIÓN DEL AUDIO DE FINALIZACIÓN
+                playAudioResource(R.raw.pa_estiramientos_finalizacion)
+
                 Toast.makeText(this@EstiramientoActivity, "Rutina finalizada", Toast.LENGTH_LONG).show()
 
                 switchStep(1)
@@ -151,6 +199,11 @@ class EstiramientoActivity : AppCompatActivity() {
         isTimerRunning = false
         btnPausePlay.setImageResource(R.drawable.ic_play)
 
+        // 💡 Pausar el audio si está sonando
+        if (mediaPlayer?.isPlaying == true) {
+            mediaPlayer?.pause()
+        }
+
         tvInstruccion.text = "Entrenamiento pausado, pulse play para continuar"
     }
 
@@ -167,11 +220,21 @@ class EstiramientoActivity : AppCompatActivity() {
             if (isTimerRunning) {
                 pauseTimer()
             } else {
+                // Si estaba pausado, reanudamos el audio si no ha terminado
+                if (mediaPlayer != null && !mediaPlayer!!.isPlaying) {
+                    try {
+                        if (mediaPlayer!!.currentPosition < mediaPlayer!!.duration) {
+                            mediaPlayer?.start()
+                        }
+                    } catch (e: Exception) { e.printStackTrace() }
+                }
+
                 if (timeLeftMS <= 0) {
                     timeLeftMS = TOTAL_TIME_MS
                     updateTimerText()
                     currentStep = 1
                     switchStep(1)
+                    releaseMediaPlayer() // Limpiar audio anterior al reiniciar ciclo
                 }
                 startTimer()
             }
@@ -180,6 +243,7 @@ class EstiramientoActivity : AppCompatActivity() {
         // Botón REINICIAR
         btnRestart.setOnClickListener {
             pauseTimer()
+            releaseMediaPlayer() // Detener audio completamente
 
             timeLeftMS = TOTAL_TIME_MS
             updateTimerText()
