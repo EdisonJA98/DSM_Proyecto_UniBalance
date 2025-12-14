@@ -1,5 +1,6 @@
 package com.example.dsmproyecto.ui.emotions
 
+import android.content.Intent // Importación necesaria para la navegación
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -54,6 +55,7 @@ class RegistroEmocionalActivity : AppCompatActivity() {
     private lateinit var btnResources: Button
     private lateinit var btnHelp: ImageButton
     private lateinit var btnBack: ImageButton
+    private lateinit var btnStats: ImageButton // Añadimos la referencia para btn_stats
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,12 +81,20 @@ class RegistroEmocionalActivity : AppCompatActivity() {
         btnResources = findViewById(R.id.btn_resources)
         btnHelp = findViewById(R.id.btn_help)
         btnBack = findViewById(R.id.btn_back)
+        btnStats = findViewById(R.id.btn_stats) // Enlazar el nuevo botón de Estadísticas
 
         // Asignar listeners a los botones del encabezado y acciones
         btnBack.setOnClickListener { finish() }
         btnHelp.setOnClickListener { showHelpModal() }
         btnRegister.setOnClickListener { showConfirmModal() }
         btnResources.setOnClickListener { showResourcesModal() }
+
+        // --- CONEXIÓN AL BOTÓN DE ESTADÍSTICAS (Paso 3A) ---
+        btnStats.setOnClickListener {
+            // Lanza la nueva actividad de Estadísticas
+            val intent = Intent(this, EstadisticasActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 
@@ -108,6 +118,7 @@ class RegistroEmocionalActivity : AppCompatActivity() {
             labelView.setTextColor(ContextCompat.getColor(this, R.color.black))
 
             // Asigna el listener de clic para manejar la selección
+            // Nota: Si usas CardView en el XML, considera asignar el listener al LinearLayout interno (ll_emoji_content)
             emojiView.setOnClickListener {
                 setSelectedEmoji(emoji.key)
             }
@@ -170,7 +181,7 @@ class RegistroEmocionalActivity : AppCompatActivity() {
         // Diálogo simple para la ayuda
         AlertDialog.Builder(this)
             .setTitle("Ayuda")
-            .setMessage("Para registrar tu emoción, elige la opción que mejor refleje cómo te sientes en este momento. Si tu emoción es intensa o negativa, considera leer la recomendación o acceder a los recursos antes de continuar. Luego, presiona \"Registrar emoción\", tu registro se guardará y podrás consultarlo luego pulsando el gráfico al costado del título.")
+            .setMessage("Para registrar tu emoción, elige la opción que mejor refleje cómo te sientes en este momento. Si tu emoción es intensa o negativa, considera leer la recomendación o acceder a los recursos antes de continuar. Luego, presiona \"Registrar emoción\", tu registro se guardará y podrás consultarlo luego pulsando el icono de gráfico en la esquina superior derecha.")
             .setPositiveButton("Entendido") { dialog, _ ->
                 dialog.dismiss()
             }

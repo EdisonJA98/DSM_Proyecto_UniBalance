@@ -8,7 +8,7 @@
     android:background="@color/color_fondo_general"
     tools:context=".ui.emotions.RegistroEmocionalActivity">
 
-    <!-- 1. HEADER (Botón de retroceso, Título, Iconos de Ayuda/Estadísticas) -->
+    <!-- 1. HEADER (Botón de retroceso, Título CENTRADO con fondo, Iconos de Ayuda/Estadísticas) -->
     <LinearLayout
         android:id="@+id/header_layout"
         android:layout_width="match_parent"
@@ -21,7 +21,7 @@
         android:paddingBottom="16dp"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Botón de Retroceder -->
+        <!-- Botón de Retroceder (A la izquierda) -->
         <ImageButton
             android:id="@+id/btn_back"
             android:layout_width="48dp"
@@ -31,36 +31,60 @@
             app:tint="@color/color_primary_emotion"
             android:contentDescription="Botón para retroceder" />
 
-        <!-- Título -->
-        <TextView
-            android:id="@+id/tv_activity_title"
+        <!-- Contenedor del Título CENTRADO (Ocupa todo el espacio disponible) -->
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Mis Emociones"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:gravity="center" />
+            android:gravity="center"
+            android:orientation="horizontal">
 
-        <!-- Iconos de Ayuda y Estadísticas (Requieren Drawables) -->
-        <ImageButton
-            android:id="@+id/btn_help"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_help"
-            android:background="@android:color/transparent"
-            app:tint="@color/color_primary_emotion"
-            android:contentDescription="Botón de ayuda" />
+            <!-- Título con Fondo de Color y Centrado (Alineación visual perfecta) -->
+            <TextView
+                android:id="@+id/tv_activity_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mis Emociones"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:background="@drawable/bg_rounded_title"
+                />
 
-        <ImageButton
-            android:id="@+id/btn_stats"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_stats_chart"
-            android:background="@android:color/transparent"
-            app:tint="@color/color_primary_emotion"
-            android:contentDescription="Botón de estadísticas" />
+        </LinearLayout>
+
+        <!-- Contenedor Vertical de Iconos (Ayuda encima de Estadísticas) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+
+            <!-- Icono de Ayuda (Arriba) -->
+            <ImageButton
+                android:id="@+id/btn_help"
+                android:layout_width="48dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_help"
+                android:background="@android:color/transparent"
+                app:tint="@color/color_primary_emotion"
+                android:contentDescription="Botón de ayuda" />
+
+            <!-- Icono de Estadísticas (Debajo) -->
+            <ImageButton
+                android:id="@+id/btn_stats"
+                android:layout_width="48dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_stats_chart"
+                android:background="@android:color/transparent"
+                app:tint="@color/color_primary_emotion"
+                android:contentDescription="Botón de estadísticas" />
+        </LinearLayout>
 
     </LinearLayout>
 

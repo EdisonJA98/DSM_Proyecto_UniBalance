@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_fondo_general"
+    tools:context=".ui.emotions.EstadisticasActivity">
+
+    <!-- HEADER (Flecha de retroceso y Título) -->
+    <LinearLayout
+        android:id="@+id/header_stats_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="32dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Botón de Retroceder -->
+        <ImageButton
+            android:id="@+id/btn_back_stats"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="@android:color/transparent"
+            app:tint="@color/color_primary_emotion"
+            android:contentDescription="Botón para retroceder" />
+
+        <!-- Título "Historial" Centrado y con Fondo -->
+        <TextView
+            android:id="@+id/tv_stats_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Historial de Emociones"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:background="@drawable/bg_rounded_title"
+            android:layout_marginHorizontal="24dp"/>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/header_stats_layout"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Filtros (Selector de Rango de Días) -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tendencias recientes"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/filter_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <!-- Botones de Filtro -->
+                    <Button
+                        android:id="@+id/btn_filter_7days"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Últimos 7 días"
+                        android:backgroundTint="@color/color_primary_emotion"
+                        android:textColor="@color/white"
+                        app:cornerRadius="8dp"
+                        android:layout_marginEnd="8dp"/>
+                    <Button
+                        android:id="@+id/btn_filter_30days"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Últimos 30 días"
+                        android:backgroundTint="@color/gray_subtitle"
+                        android:textColor="@color/white"
+                        app:cornerRadius="8dp"
+                        android:layout_marginEnd="8dp"/>
+                    <Button
+                        android:id="@+id/btn_filter_all"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Todo el Historial"
+                        android:backgroundTint="@color/gray_subtitle"
+                        android:textColor="@color/white"
+                        app:cornerRadius="8dp"/>
+                </LinearLayout>
+            </HorizontalScrollView>
+
+
+            <!-- Contenedor del Gráfico -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp"
+                android:layout_marginBottom="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Resumen de texto (se llena en Kotlin) -->
+                    <TextView
+                        android:id="@+id/tv_chart_summary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:text="[Resumen de la tendencia]"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <!-- ÁREA DEL GRÁFICO (ImageView con el gráfico simulado) -->
+                    <ImageView
+                        android:id="@+id/iv_line_chart"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_line_chart_simulated"
+                        android:contentDescription="Gráfico de tendencia emocional"
+                        android:scaleType="fitCenter"
+                        app:tint="@null"
+                        />
+
+                    <!-- Texto de la escala -->
+                    <TextView
+                        android:id="@+id/tv_chart_placeholder"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:text="Las emociones tienen una escala de 1 a 5, donde 5 es Muy Feliz."
+                        android:textColor="@color/gray_subtitle"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+
+            <!-- Lista de Registros por Día (Historial detallado) -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Registros detallados"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:id="@+id/detail_history_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <!-- Este contenido se llenará dinámicamente con la lógica Kotlin -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="2025-11-07 • 😄 Muy Feliz"
+                    android:paddingVertical="4dp"
+                    android:textSize="16sp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="2025-11-06 • 🙂 Feliz"
+                    android:paddingVertical="4dp"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

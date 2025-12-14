@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="300dp"
+    android:height="200dp"
+    android:viewportWidth="100"
+    android:viewportHeight="60">
+
+    <!-- Fondo de las líneas de la cuadrícula (Líneas horizontales grises) -->
+    <path
+        android:strokeWidth="0.5"
+        android:strokeColor="#DDDDDD"
+        android:pathData="M 0 50 H 100 M 0 40 H 100 M 0 30 H 100 M 0 20 H 100 M 0 10 H 100"/>
+
+    <!-- La Línea de Tendencia (Curva Turquesa/Verde) -->
+    <!-- Usamos Curvas Cúbicas (C) que son universales para simular la línea. -->
+    <path
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeColor="@color/color_primary_emotion"
+        android:fillColor="#00000000"
+        android:pathData="M 10 30 C 20 45, 30 15, 45 40 C 60 55, 75 30, 95 45"/>
+
+</vector>

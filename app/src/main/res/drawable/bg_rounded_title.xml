@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Define la forma (rectángulo) y aplica el color turquesa principal (color_primary_emotion) con esquinas redondeadas. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Relleno con el color primario de acento -->
+    <solid android:color="@color/color_primary_emotion" />
+
+    <!-- Define las esquinas redondeadas -->
+    <corners android:radius="12dp" />
+</shape>
