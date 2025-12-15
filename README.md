@@ -6,12 +6,11 @@ Este repositorio contiene la solución a **4 ejercicios en Kotlin** como parte d
 
 ## 👥 Participantes
 
-| Apellidos        | Nombres       | Código   | Correo                       |
-|------------------|--------------|----------|-------------------------------|
-|   |  |  |      |
-| Javier Ayala     | Edison Juan  | 20200103 | edisonjuan.javier@unmsm.edu.pe|
-| Villanueva Ines  | Jose Antonio | 22200116 | jose.villanueva14@unmsm.edu.pe|
-
+| Apellidos        | Nombres         | Código   | Correo                        |
+|------------------|-----------------|----------|-------------------------------|
+| Javier Ayala     | Edison Juan     | 20200103 | edisonjuan.javier@unmsm.edu.pe|
+| Villanueva Ines  | Jose Antonio    | 22200116 | jose.villanueva14@unmsm.edu.pe|
+| Castillo Araujo  | Rodrigo Orlando | 22200146 | rodrigo.castillo2@unmsm.edu.pe|
 
 
 ## ⚙️ Requisitos
