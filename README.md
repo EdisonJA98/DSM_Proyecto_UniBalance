@@ -10,6 +10,8 @@ Este repositorio contiene la solución a **4 ejercicios en Kotlin** como parte d
 |------------------|--------------|----------|-------------------------------|
 |   |  |  |      |
 | Javier Ayala     | Edison Juan  | 20200103 | edisonjuan.javier@unmsm.edu.pe|
+| Villanueva Ines  | Jose Antonio | 22200116 | jose.villanueva14@unmsm.edu.pe|
+
 
 
 ## ⚙️ Requisitos
